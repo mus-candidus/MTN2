@@ -9,6 +9,16 @@ namespace MTN2.MapData
     public class Structure
     {
         public Placement Coordinates { get; set; }
-        public WarpPoint Poi { get; set; }
+        public Interaction PointOfInteraction { get; set; }
+
+        public Structure() {
+            Coordinates = new Placement(0, 0);
+            PointOfInteraction = new Interaction(0, 0);
+        }
+
+        public Structure(Placement Coordinates, Interaction PointOfInteraction) {
+            this.Coordinates = Coordinates;
+            this.PointOfInteraction = PointOfInteraction;
+        }
     }
 }

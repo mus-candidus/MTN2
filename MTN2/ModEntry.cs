@@ -11,7 +11,13 @@ namespace MTN2
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod {
 
+        private List<Patch> Patches;
         protected HarmonyInstance Harmony;
+        protected CustomFarmManager FarmManager;
+
+        public ModEntry() {
+            FarmManager = new CustomFarmManager();
+        }
 
         /// <summary>
         /// Main function / Entry point of MTN. Executed by SMAPI.
@@ -21,8 +27,12 @@ namespace MTN2
             Monitor.Log("Begin: Harmony Patching", LogLevel.Trace);
             Harmony = HarmonyInstance.Create("MTN.SgtPickles");
 
+
             return;
         }
 
+        private void Populate(object sender, EventArgs e) {
+            FarmManager.Populate(Helper, Monitor);
+        }
     }
 }
