@@ -56,10 +56,12 @@
   <ItemGroup>
     <Compile Include="CustomFarm.cs" />
     <Compile Include="CustomFarmManager.cs" />
-    <Compile Include="MapData\LargeDebris.cs" />
-    <Compile Include="MapData\Resource.cs" />
+    <Compile Include="MapData\Forage.cs" />
+    <Compile Include="MapData\Ore.cs" />
+    <Compile Include="MapData\Spawn\LargeDebris.cs" />
+    <Compile Include="MapData\Spawn\Resource.cs" />
     <Compile Include="MapData\Structs\Modifier.cs" />
-    <Compile Include="MapData\SpawnEnums.cs" />
+    <Compile Include="MapData\Spawn\SpawnEnums.cs" />
     <Compile Include="MapData\Structs\Area.cs" />
     <Compile Include="MapData\MapFile.cs" />
     <Compile Include="MapData\Neighbor.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="MapData\Structure.cs" />
     <Compile Include="MapData\Structs\Interaction.cs" />
     <Compile Include="MapData\Structs\Warp.cs" />
+    <Compile Include="Menus\CharacterCustomizationMTN.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,7 +79,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Menus\" />
+    <Folder Include="Locations\" />
     <Folder Include="Patches\" />
   </ItemGroup>
   <ItemGroup>
