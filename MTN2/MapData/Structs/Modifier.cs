@@ -13,5 +13,10 @@ namespace MTN2.MapData {
             Additive = (!Option) ? Value : 0.0f;
             Multipler = (Option) ? Value : 0.0f;
         }
+
+        public Modifier(float ValueAdd, float ValueMult) {
+            Additive = ValueAdd;
+            Multipler = ValueMult;
+        }
     }
 }

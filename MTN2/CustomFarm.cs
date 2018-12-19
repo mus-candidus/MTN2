@@ -46,6 +46,9 @@ namespace MTN2
         //Neighboring Maps
 
         //Behavioral
+        public LargeDebris ResourceClumps { get; set; }
+        public Forage Foraging { get; set; }
+
 
         //Furniture
         public List<Furniture> FurnitureList { get; set; }

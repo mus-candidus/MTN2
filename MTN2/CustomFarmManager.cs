@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 namespace MTN2
 {
     public class CustomFarmManager {
-        protected List<CustomFarm> FarmList;
+        public List<CustomFarm> FarmList { get; private set; }
+        public bool NoDebris { get; set; } = false;
 
         public void Populate(IModHelper Helper, IMonitor Monitor) {
             CustomFarm FarmData;
