@@ -11,7 +11,12 @@ using Newtonsoft.Json;
 
 namespace MTN2
 {
+    /// <summary>
+    /// CustomFarm Class. Contains all the information for a single custom farm map to operate. 
+    /// Used primarily to retain the data. Does not perform operations itself.
+    /// </summary>
     public class CustomFarm {
+        //Fundalmentals
         public int ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

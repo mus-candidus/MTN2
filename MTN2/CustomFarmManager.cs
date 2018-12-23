@@ -9,17 +9,47 @@ using System.Threading.Tasks;
 
 namespace MTN2
 {
+    /// <summary>
+    /// CustomFarmManager class. Performs all the nessecary operations needed to allow a custom farm (or custom farms)
+    /// to properly function. It is also built to distinguish between canon farms, or custom farms. Contains a List<T>
+    /// of CustomFarm classes and manipulates / gathers the data accordingly.
+    /// </summary>
     public class CustomFarmManager {
+        protected int LoadedIndex = 0;
+        protected int SelectedIndex = 0;
         public List<CustomFarm> FarmList { get; private set; }
         public bool NoDebris { get; set; } = false;
+        public bool Canon { get; set; } = true;
 
+        public CustomFarm SelectedFarm {
+            get {
+                return FarmList[SelectedIndex];
+            }
+        }
+
+        public CustomFarm LoadedFarm {
+            get {
+                return FarmList[LoadedIndex];
+            }
+        }
+
+        public CustomFarmManager() {
+            FarmList = new List<CustomFarm>();
+        }
+
+        /// <summary>
+        /// Populates the List<CustomFarm> FarmList variable with all the Content Packs
+        /// registered to MTN.
+        /// </summary>
+        /// <param name="Helper">SMAPI's IModHelper, to load in the Content Packs</param>
+        /// <param name="Monitor">SMAPI's IMonitor, to print useful information</param>
         public void Populate(IModHelper Helper, IMonitor Monitor) {
             CustomFarm FarmData;
             string IconFile;
 
             FarmList = new List<CustomFarm>();
 
-            foreach (IContentPack ContentPack in Helper.GetContentPacks()) {
+            foreach (IContentPack ContentPack in Helper.ContentPacks.GetOwned()) {
                 Monitor.Log($"Reading content pack: {ContentPack.Manifest.Name} {ContentPack.Manifest.Version}.");
                 FarmData = ContentPack.ReadJsonFile<CustomFarm>("farmType.json");
                 
@@ -35,6 +65,31 @@ namespace MTN2
             }
 
             return;
+        }
+
+        /// <summary>
+        /// Updates the selected farm. Used during the creation of a new game.
+        /// </summary>
+        /// <param name="farmName"></param>
+        public void UpdateSelectedFarm(string farmName) {
+            if (!farmName.StartsWith("MTN_")) {
+                Canon = true;
+                SelectedIndex = 0;
+                return;
+            }
+            farmName = farmName.Substring(3);
+            for (int i = 0; i < FarmList.Count; i++) {
+                if (FarmList[i].Name == farmName) {
+                    SelectedIndex = i;
+                    return;
+                }
+            }
+            SelectedIndex = 0;
+            return;
+        }
+
+        public void LoadCustomFarm() {
+            LoadedIndex = SelectedIndex;
         }
     }
 }

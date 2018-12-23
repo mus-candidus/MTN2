@@ -12,9 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MTN2.Menus {
+    /// <summary>
+    /// A modified version of CharacterCustomization Menu to allow the user to select
+    /// between canon farms and custom farms as well as additional options. 
+    /// </summary>
     public class CharacterCustomizationMTN : IClickableMenu {
         //MTN Stuff//
         private readonly CustomFarmManager farmManager;
+        protected List<ClickableTextureComponent> allFarmButtons = new List<ClickableTextureComponent>();
 
         public ClickableTextureComponent noDebrisButton;
         public ClickableTextureComponent upArrow;
@@ -22,6 +27,7 @@ namespace MTN2.Menus {
         public ClickableTextureComponent scrollBar;
         public Rectangle scrollBarRunner;
         public int currentItemIndex;
+        public string prevClickedFarmTypeBtn = "Standard";
         public string lastClickedFarmTypeBtn = "Standard";
         public bool allowCabinsSeperate = true;
         public bool allowCabinsClose = true;
@@ -171,13 +177,15 @@ namespace MTN2.Menus {
         }
 
         private void setUpPositions() {
-            this.labels.Clear();
-            this.petButtons.Clear();
-            this.genderButtons.Clear();
-            this.cabinLayoutButtons.Clear();
-            this.leftSelectionButtons.Clear();
-            this.rightSelectionButtons.Clear();
-            this.farmTypeButtons.Clear();
+            labels.Clear();
+            petButtons.Clear();
+            genderButtons.Clear();
+            cabinLayoutButtons.Clear();
+            leftSelectionButtons.Clear();
+            rightSelectionButtons.Clear();
+            farmTypeButtons.Clear();
+            allFarmButtons.Clear();
+
             this.okButton = new ClickableTextureComponent("OK", new Rectangle(this.xPositionOnScreen + this.width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 64, this.yPositionOnScreen + this.height - IClickableMenu.borderWidth - IClickableMenu.spaceToClearTopBorder + 16, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false) {
                 myID = 505,
                 upNeighborID = 530,
@@ -341,15 +349,18 @@ namespace MTN2.Menus {
                 });
 
                 //Custom Farm buttons, added to farmTypeButtons list, but will not be seen until user scrolls down
+                foreach (ClickableTextureComponent farmButton in farmTypeButtons) {
+                    allFarmButtons.Add(farmButton);
+                }
                 foreach (CustomFarm customFarm in farmManager.FarmList) {
-                    farmTypeButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(baseFarmButton.X, baseFarmButton.Y + 440, 88, 80), null, customFarm.Description, customFarm.IconSource, new Rectangle(0, 0, 22, 20), 4f, false));
+                    allFarmButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(baseFarmButton.X, baseFarmButton.Y + 440, 88, 80), null, customFarm.Description, customFarm.IconSource, new Rectangle(0, 0, 22, 20), 4f, false));
                 }
 
                 //Set up scroll bar / arrow buttons
                 upArrow = new ClickableTextureComponent(new Rectangle(baseFarmButton.X + 115, baseFarmButton.Y + 75, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f, false);
                 downArrow = new ClickableTextureComponent(new Rectangle(baseFarmButton.X + 115, baseFarmButton.Y + 500, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f, false);
                 scrollBar = new ClickableTextureComponent(new Rectangle(upArrow.bounds.X + 11, upArrow.bounds.Y + upArrow.bounds.Height + 4, 24, 20), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f, false);
-                scrollBarRunner = new Rectangle(scrollBar.bounds.X, upArrow.bounds.Y + upArrow.bounds.Height + 4, scrollBar.bounds.Width, this.height - upArrow.bounds.Height - 332);
+                scrollBarRunner = new Rectangle(scrollBar.bounds.X, upArrow.bounds.Y + upArrow.bounds.Height + 4, scrollBar.bounds.Width, height - upArrow.bounds.Height - 332);
             }
             //End of MTN customs
 
@@ -707,7 +718,7 @@ namespace MTN2.Menus {
             ///
             if (name.StartsWith("MTN_")) {
                 if (source == CharacterCustomization.Source.NewGame || source == CharacterCustomization.Source.HostNewFarm) {
-                    Game1.whichFarm = Memory.getFarmIdByName(name);
+                    Game1.whichFarm = 10;
                     Game1.spawnMonstersAtNight = false;
                     adjustWhichFarmType(name);
                 }
@@ -764,9 +775,9 @@ namespace MTN2.Menus {
                 Game1.player.displayName = Game1.player.Name;
                 Game1.player.favoriteThing.Value = this.favThingBox.Text.Trim();
                 Game1.player.isCustomized.Value = true;
-                //
-                Memory.loadCustomFarmType(Game1.whichFarm);
-                //
+                
+                farmManager.LoadCustomFarm();
+                
                 if (this.source == CharacterCustomization.Source.HostNewFarm) {
                     Game1.multiplayerMode = 2;
                 }
@@ -797,21 +808,21 @@ namespace MTN2.Menus {
         //More support. ZA WURLDO
         private void adjustWhichFarmType(string name) {
             lastClickedFarmTypeBtn = name;
-            Memory.updateSelectedFarm(name);
+            farmManager.UpdateSelectedFarm(name);
             adjustCabinSettings();
         }
 
         //Added for support. REEEEE
         private void adjustCabinSettings() {
-            if (Memory.selectedFarm.cabinCapacity == 0) {
+            if (farmManager.SelectedFarm.CabinCapacity == 0) {
                 Game1.startingCabins = 0;
                 return;
-            } else if (Memory.selectedFarm.cabinCapacity < Game1.startingCabins) {
-                Game1.startingCabins = Memory.selectedFarm.cabinCapacity;
+            } else if (farmManager.SelectedFarm.CabinCapacity < Game1.startingCabins) {
+                Game1.startingCabins = farmManager.SelectedFarm.CabinCapacity;
             }
 
-            allowCabinsClose = Memory.selectedFarm.allowClose;
-            allowCabinsSeperate = Memory.selectedFarm.allowSeperate;
+            allowCabinsClose = farmManager.SelectedFarm.AllowClose;
+            allowCabinsSeperate = farmManager.SelectedFarm.AllowSeperate;
             //Memory.selectedFarm.cabinCapacity;
         }
 
@@ -821,10 +832,10 @@ namespace MTN2.Menus {
         private void selectionClick(string name, int change) {
             switch (name) {
                 case "Cabins":
-                    if ((Game1.startingCabins != 0 || change >= 0) && (Game1.startingCabins != Memory.selectedFarm.cabinCapacity || change <= 0))
+                    if ((Game1.startingCabins != 0 || change >= 0) && (Game1.startingCabins != farmManager.SelectedFarm.CabinCapacity || change <= 0))
                         Game1.playSound("axchop");
                     Game1.startingCabins += change;
-                    Game1.startingCabins = Math.Max(0, Math.Min(Memory.selectedFarm.cabinCapacity, Game1.startingCabins));
+                    Game1.startingCabins = Math.Max(0, Math.Min(farmManager.SelectedFarm.CabinCapacity, Game1.startingCabins));
                     break;
                 case "Hair":
                     Game1.player.changeHairStyle((int)((NetFieldBase<int, NetInt>)Game1.player.hair) + change);
@@ -1419,21 +1430,25 @@ namespace MTN2.Menus {
 
             //MODIFICATIONS MADE HERE
             if (source == CharacterCustomization.Source.NewGame || source == CharacterCustomization.Source.HostNewFarm) {
-                int count = 0;
+                
                 Point baseFarmButton = new Point(this.xPositionOnScreen + this.width + 4 + 8, this.yPositionOnScreen + IClickableMenu.borderWidth * 2);
                 IClickableMenu.drawTextureBox(b, this.farmTypeButtons[0].bounds.X - 16, this.farmTypeButtons[0].bounds.Y - 20, 120, 476, Color.White);
 
-                farmTypeButtons.Clear();
-                while (count < 5) {
-                    farmTypeButtons.Add(farmTypeButtons[currentItemIndex + count]);
-                    farmTypeButtons[count].bounds = new Rectangle(baseFarmButton.X, baseFarmButton.Y + menuProperties[count].yOffSet, 88, 80);
-                    farmTypeButtons[count].myID = menuProperties[count].ID;
-                    farmTypeButtons[count].downNeighborID = menuProperties[count].downNeighborID;
-                    farmTypeButtons[count].upNeighborID = menuProperties[count].upNeightborID;
-                    farmTypeButtons[count].leftNeighborID = menuProperties[count].leftNeighborID;
-                    farmTypeButtons[count].rightNeighborID = menuProperties[count].rightNeighborID;
-                    count++;
+                if (lastClickedFarmTypeBtn != prevClickedFarmTypeBtn) {
+                    int count = 0;
+                    farmTypeButtons.Clear();
+                    while (count < 5) {
+                        farmTypeButtons.Add(allFarmButtons[currentItemIndex + count]);
+                        farmTypeButtons[count].bounds = new Rectangle(baseFarmButton.X, baseFarmButton.Y + (88 * (1 + count)), 88, 80);
+                        farmTypeButtons[count].myID = 531 + count;
+                        farmTypeButtons[count].downNeighborID = (count == 4) ? 505 : 532 + count;
+                        farmTypeButtons[count].upNeighborID = (count == 0) ? 0 : 531 + (count - 1);
+                        farmTypeButtons[count].leftNeighborID = (count == 0) ? 537 : (count == 1) ? 510 : (count == 2) ? 522 : (count == 3) ? 525 : 528;
+                        farmTypeButtons[count].rightNeighborID = (count == 0) ? 0 : 81114;
+                        count++;
+                    }
                 }
+                prevClickedFarmTypeBtn = lastClickedFarmTypeBtn;
 
                 for (int i = 0; i < 5; i++) {
                     this.farmTypeButtons[i].draw(b, this.farmTypeButtons[i].name.Contains("Gray") ? (Color.Black * 0.5f) : Color.White, 0.88f);
@@ -1451,7 +1466,7 @@ namespace MTN2.Menus {
             upArrow.draw(b);
             downArrow.draw(b);
             scrollBar.draw(b);
-            if (newFarmTypeButtons.Count > 5) {
+            if (allFarmButtons.Count > 5) {
                 drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f, false);
                 scrollBar.draw(b);
             }
@@ -1497,8 +1512,8 @@ namespace MTN2.Menus {
         }
 
         public void setScrollBarToCurrentIndex() {
-            scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, newFarmTypeButtons.Count - 5 + 1) * currentItemIndex + upArrow.bounds.Bottom + 5;
-            if (currentItemIndex != newFarmTypeButtons.Count - 5)
+            scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, allFarmButtons.Count - 5 + 1) * currentItemIndex + upArrow.bounds.Bottom + 5;
+            if (currentItemIndex != allFarmButtons.Count - 5)
                 return;
             scrollBar.bounds.Y = downArrow.bounds.Y - scrollBar.bounds.Height - 30;
         }
@@ -1509,7 +1524,7 @@ namespace MTN2.Menus {
                 upArrowPressed();
                 return;
             }
-            if (direction < 0 && currentItemIndex < Math.Max(0, newFarmTypeButtons.Count - 5)) {
+            if (direction < 0 && currentItemIndex < Math.Max(0, allFarmButtons.Count - 5)) {
                 downArrowPressed();
                 return;
             }

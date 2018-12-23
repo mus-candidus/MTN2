@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Harmony;
+using MTN2.Menus;
 using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace MTN2
 {
@@ -31,8 +34,29 @@ namespace MTN2
             return;
         }
 
+        /// <summary>
+        /// Populates the CustomFarmManager with the installed Content Packs registered for MTN.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Populate(object sender, EventArgs e) {
             FarmManager.Populate(Helper, Monitor);
+        }
+
+        /// <summary>
+        /// Used to replace the vanilla Character Customization Menu with MTN's version. This allows the user to
+        /// be able to select custom farms and other options available.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewGameMenu(object sender, EventArgs e) {
+            if (Game1.activeClickableMenu is TitleMenu) {
+                if (TitleMenu.subMenu is CharacterCustomization) {
+                    CharacterCustomization oldMenu = (CharacterCustomization)TitleMenu.subMenu;
+                    CharacterCustomizationMTN menu = new CharacterCustomizationMTN(FarmManager, oldMenu.source);
+                    TitleMenu.subMenu = menu;
+                }
+            }
         }
     }
 }
