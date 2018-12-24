@@ -49,11 +49,14 @@ namespace MTN2
         public Structure PetWaterBowl { get; set; }
 
         //Neighboring Maps
+        public List<Neighbor> Neighbors { get; set; }
+
+        //Map Overrides
+        public List<MapFile> Overrides { get; set; }
 
         //Behavioral
         public LargeDebris ResourceClumps { get; set; }
         public Forage Foraging { get; set; }
-
 
         //Furniture
         public List<Furniture> FurnitureList { get; set; }

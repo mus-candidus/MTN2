@@ -7,16 +7,21 @@ using xTile;
 using StardewValley;
 using StardewValley.Locations;
 using StardewModdingAPI;
+using MTN2.MapData;
 
 namespace MTN2.Patches.Game1Patches {
+    /// <summary>
+    /// Patches the method Game1.loadForNewGame to allow the implementation
+    /// of custom farms, overriding existing maps, and 
+    /// </summary>
     public class loadForNewGamePatch {
 
-        private readonly CustomFarmManager farmManager;
-        private readonly IMonitor Monitor;
+        private static CustomFarmManager farmManager;
+        private static IMonitor Monitor;
 
         public loadForNewGamePatch(CustomFarmManager farmManager, IMonitor Monitor) {
-            this.farmManager = farmManager;
-            this.Monitor = Monitor;
+            loadForNewGamePatch.farmManager = farmManager;
+            loadForNewGamePatch.Monitor = Monitor;
         }
 
         public static void Postfix() {
@@ -24,126 +29,128 @@ namespace MTN2.Patches.Game1Patches {
             Map map;
             string mapAssetKey;
 
-            if (Game1.whichFarm > 4) {
-                if (Memory.loadedFarm == null) {
-                    Memory.loadCustomFarmType(Game1.whichFarm);
-                }
+            if (farmManager.LoadedFarm == null) {
+                farmManager.LoadCustomFarm(Game1.whichFarm);
+            }
 
+            if (!farmManager.Canon) {
                 for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
                     if (Game1.locations[farmIndex].Name == "Farm") break;
                 }
 
-                if (Memory.loadedFarm.farmMapType == fileType.raw) {
-                    map = Memory.loadedFarm.contentpack.LoadAsset<Map>(Memory.loadedFarm.farmMapFile + ".tbin");
-                }
-                mapAssetKey = Memory.loadedFarm.contentpack.GetActualAssetKey(Memory.loadedFarm.farmMapFile + ((Memory.loadedFarm.farmMapType == fileType.raw) ? ".tbin" : ".xnb"));
+                mapAssetKey = farmManager.GetAssetKey(out map);
                 Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
             }
 
-            Memory.farmMaps.Add(new additionalMap<Farm>("BaseFarm", "Farm", (Game1.whichFarm > 4) ? Memory.loadedFarm.farmMapType : fileType.xnb, "Farm", "Base Farm", Game1.getFarm()));
+            //Loaded Farm Maps
+            //Memory.farmMaps.Add(new additionalMap<Farm>("BaseFarm", "Farm", (Game1.whichFarm > 4) ? Memory.loadedFarm.farmMapType : fileType.xnb, "Farm", "Base Farm", Game1.getFarm()));
 
-            if (Memory.isCustomFarmLoaded && Memory.loadedFarm.additionalMaps != null) {
-                foreach (additionalMap<GameLocation> m in Memory.loadedFarm.additionalMaps) {
+            if (!farmManager.Canon && farmManager.LoadedFarm.AdditionalMaps != null) {
+                foreach (MapFile mf in farmManager.LoadedFarm.AdditionalMaps) {
                     object newMap;
 
-                    if (m.type == fileType.raw) {
-                        map = Memory.loadedFarm.contentpack.LoadAsset<Map>(m.FileName + ".tbin");
+                    if (mf.FileType == FileType.raw) {
+                        map = farmManager.LoadMap(mf.FileName + ".tbin");
                     }
 
-                    mapAssetKey = Memory.loadedFarm.contentpack.GetActualAssetKey(m.FileName + ((m.type == fileType.raw) ? ".tbin" : ".xnb"));
+                    mapAssetKey = farmManager.GetAssetKey(mf.FileName, mf.FileType);
 
-                    switch (m.mapType) {
+                    switch (mf.MapType) {
                         case "Farm":
                         case "FarmExpansion":
                         case "MTNFarmExtension":
-                            newMap = new Farm(mapAssetKey, m.Location);
+                            newMap = new Farm(mapAssetKey, mf.Name);
                             Game1.locations.Add((Farm)newMap);
                             //Game1.locations.Add(new FarmExtension(mapAssetKey, m.Location, newMap as Farm));
-                            Memory.farmMaps.Add(new additionalMap<Farm>(m, Game1.locations.Last() as Farm));
+                            //Memory.farmMaps.Add(new additionalMap<Farm>(m, Game1.locations.Last() as Farm));
                             break;
                         case "FarmCave":
-                            newMap = new FarmCave(mapAssetKey, m.Location);
+                            newMap = new FarmCave(mapAssetKey, mf.Name);
                             Game1.locations.Add((FarmCave)newMap);
                             break;
                         case "GameLocation":
-                            newMap = new GameLocation(mapAssetKey, m.Location);
+                            newMap = new GameLocation(mapAssetKey, mf.Name);
                             Game1.locations.Add((GameLocation)newMap);
                             break;
                         case "BuildableGameLocation":
-                            newMap = new BuildableGameLocation(mapAssetKey, m.Location);
+                            newMap = new BuildableGameLocation(mapAssetKey, mf.Name);
                             Game1.locations.Add((BuildableGameLocation)newMap);
                             break;
                         default:
-                            newMap = new GameLocation(mapAssetKey, m.Location);
+                            newMap = new GameLocation(mapAssetKey, mf.Name);
                             Game1.locations.Add((GameLocation)newMap);
                             break;
                     }
-                    Memory.instance.Monitor.Log("Custom map loaded. Name: " + (newMap as GameLocation).Name + " Type: " + newMap.ToString());
+                    Monitor.Log("Custom map loaded. Name: " + (newMap as GameLocation).Name + " Type: " + newMap.ToString());
                 }
             }
 
-            if (Memory.isCustomFarmLoaded && Memory.loadedFarm.overrideMaps != null) {
+            if (!farmManager.Canon && farmManager.LoadedFarm.Overrides != null) {
                 int i;
-                foreach (overrideMap m in Memory.loadedFarm.overrideMaps) {
-                    if (m.type == fileType.raw) {
-                        map = Memory.loadedFarm.contentpack.LoadAsset<Map>(m.FileName + ".tbin");
+                foreach (MapFile mf in farmManager.LoadedFarm.Overrides) {
+                    if (mf.FileType == FileType.raw) {
+                        map = farmManager.LoadMap(mf.FileName + ".tbin");
                     }
-                    mapAssetKey = Memory.loadedFarm.contentpack.GetActualAssetKey(m.FileName + ((m.type == fileType.raw) ? ".tbin" : ".xnb"));
+                    mapAssetKey = farmManager.GetAssetKey(mf.FileName, mf.FileType);
 
                     for (i = 0; i < Game1.locations.Count; i++) {
-                        if (Game1.locations[i].Name == m.Location) break;
+                        if (Game1.locations[i].Name == mf.Name) break;
                     }
+
                     if (i >= Game1.locations.Count) {
-                        Memory.instance.Monitor.Log(String.Format("Unable to replace {0}, map was not found. Skipping", m.Location), LogLevel.Warn);
+                        Monitor.Log(String.Format("Unable to replace {0}, map was not found. Skipping", mf.Name), LogLevel.Warn);
                     } else {
-                        switch (m.Location) {
+                        switch (mf.Name) {
                             case "AdventureGuild":
-                                Game1.locations[i] = new AdventureGuild(mapAssetKey, m.Location);
+                                Game1.locations[i] = new AdventureGuild(mapAssetKey, mf.Name);
                                 break;
                             case "BathHousePool":
-                                Game1.locations[i] = new BathHousePool(mapAssetKey, m.Location);
+                                Game1.locations[i] = new BathHousePool(mapAssetKey, mf.Name);
                                 break;
                             case "Beach":
-                                Game1.locations[i] = new Beach(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Beach(mapAssetKey, mf.Name);
                                 break;
                             case "BusStop":
-                                Game1.locations[i] = new BusStop(mapAssetKey, m.Location);
+                                Game1.locations[i] = new BusStop(mapAssetKey, mf.Name);
                                 break;
                             case "Club":
-                                Game1.locations[i] = new Club(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Club(mapAssetKey, mf.Name);
                                 break;
                             case "Desert":
-                                Game1.locations[i] = new Desert(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Desert(mapAssetKey, mf.Name);
                                 break;
                             case "Forest":
-                                Game1.locations[i] = new Forest(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Forest(mapAssetKey, mf.Name);
                                 break;
                             case "FarmCave":
-                                Game1.locations[i] = new FarmCave(mapAssetKey, m.Location);
+                                Game1.locations[i] = new FarmCave(mapAssetKey, mf.Name);
                                 break;
                             case "Mountain":
-                                Game1.locations[i] = new Mountain(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Mountain(mapAssetKey, mf.Name);
                                 break;
                             case "Railroad":
-                                Game1.locations[i] = new Railroad(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Railroad(mapAssetKey, mf.Name);
                                 break;
                             case "SeedShop":
-                                Game1.locations[i] = new SeedShop(mapAssetKey, m.Location);
+                                Game1.locations[i] = new SeedShop(mapAssetKey, mf.Name);
                                 break;
                             case "Sewer":
-                                Game1.locations[i] = new Sewer(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Sewer(mapAssetKey, mf.Name);
+                                break;
+                            case "Town":
+                                Game1.locations[i] = new Town(mapAssetKey, mf.Name);
                                 break;
                             case "WizardHouse":
-                                Game1.locations[i] = new WizardHouse(mapAssetKey, m.Location);
+                                Game1.locations[i] = new WizardHouse(mapAssetKey, mf.Name);
                                 break;
                             case "Woods":
-                                Game1.locations[i] = new Woods(mapAssetKey, m.Location);
+                                Game1.locations[i] = new Woods(mapAssetKey, mf.Name);
                                 break;
                             default:
-                                Game1.locations[i] = new GameLocation(mapAssetKey, m.Location);
+                                Game1.locations[i] = new GameLocation(mapAssetKey, mf.Name);
                                 break;
                         }
-                        Monitor.Log("Map has been overridden with a custom map: " + m.Location);
+                        Monitor.Log("Map has been overridden with a custom map: " + mf.Name);
                     }
                 }
             }

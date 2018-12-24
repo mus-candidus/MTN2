@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using MTN2.MapData;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xTile;
 
 namespace MTN2
 {
@@ -30,6 +32,18 @@ namespace MTN2
         public CustomFarm LoadedFarm {
             get {
                 return FarmList[LoadedIndex];
+            }
+        }
+
+        public FileType BaseFarmFileType {
+            get {
+                return FarmList[LoadedIndex].FarmMap.FileType;
+            }
+        }
+
+        public string BaseFarmFileName {
+            get {
+                return FarmList[LoadedIndex].FarmMap.FileName;
             }
         }
 
@@ -90,6 +104,29 @@ namespace MTN2
 
         public void LoadCustomFarm() {
             LoadedIndex = SelectedIndex;
+        }
+
+        public void LoadCustomFarm(int whichFarm) {
+            if (whichFarm < 5) {
+                NoDebris = true;
+            }
+        }
+        
+        public string GetAssetKey(out Map map) {
+            if (LoadedFarm.FarmMap.FileType == FileType.raw) {
+                map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
+            } else {
+                map = null;
+            }
+            return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((LoadedFarm.FarmMap.FileType == FileType.raw) ? ".tbin" : ".xnb"));
+        }
+
+        public string GetAssetKey(string fileName, FileType fileType) {
+            return LoadedFarm.ContentPack.GetActualAssetKey(fileName + ((fileType == FileType.raw) ? ".tbin" : ".xnb"));
+        }
+
+        public Map LoadMap(string fileName) {
+            return LoadedFarm.ContentPack.LoadAsset<Map>(fileName);
         }
     }
 }

@@ -7,23 +7,25 @@ using System.Threading.Tasks;
 namespace MTN2.MapData
 {
     public class MapFile {
-        public string Location { get; set; }
+        //The Type of file the map is stored (.xnb or .tbin (raw))
+        public FileType FileType { get; set; } = FileType.xnb;
+        //The file name containing the map data.
         public string FileName { get; set; }
+        //The type of class said map should be based on. Default is GameLocation (the absolute basis)
         public string MapType { get; set; } = "GameLocation";
-        public string DisplayName { get; set; } = "Untitled";
+        //The name of the map.
+        public string Name { get; set; } = "Untitled";
 
-        public MapFile(string Location, string FileName) {
-            this.Location = Location;
+        public MapFile(string FileName) {
             this.FileName = FileName;
             MapType = "GameLocation";
-            DisplayName = "Untitled";
+            Name = "Untitled";
         }
 
-        public MapFile(string Location, string FileName, string MapType, string DisplayName) {
-            this.Location = Location;
+        public MapFile(string FileName, string MapType, string Name) {
             this.FileName = FileName;
             this.MapType = MapType;
-            this.DisplayName = DisplayName;
+            this.Name = Name;
         }
     }
 }

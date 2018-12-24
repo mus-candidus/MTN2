@@ -876,7 +876,6 @@ namespace MTN2.Menus {
         /////////////////////////
         //POINT OF INTERCEPTION//
         /////////////////////////
-        //Blow this shit up
         //Need to rework a bit for additional inputs
         //and buttons (Farm Types)
         public override void receiveLeftClick(int x, int y, bool playSound = true) {
@@ -1460,7 +1459,6 @@ namespace MTN2.Menus {
                     }
                 }
             }
-            //
 
             //Scroll Bar and Up/Down Buttons
             upArrow.draw(b);
@@ -1472,13 +1470,11 @@ namespace MTN2.Menus {
             }
 
             setScrollBarToCurrentIndex();
-            //
 
             //No Debris Button
             //IClickableMenu.drawTextureBox(b, farmTypeButtons[0].bounds.X - 16, farmTypeButtons[4].bounds.Y + 110, 250, 80, Color.White);
             noDebrisButton.draw(b);
             Utility.drawTextWithShadow(b, "No Debris", Game1.smallFont, new Vector2(noDebrisButton.bounds.X + noDebrisButton.bounds.Width - 20, noDebrisButton.bounds.Y + 8), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
-            //
 
             if (this.canLeaveMenu()) {
                 this.okButton.draw(b, Color.White, 0.75f);
