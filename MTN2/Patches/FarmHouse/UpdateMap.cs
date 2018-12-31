@@ -12,8 +12,8 @@ namespace MTN2.Patches.FarmHousePatches
     {
         private static CustomFarmManager farmManager;
 
-        public UpdateMapPatch(CustomFarmManager farmManager) {
-            UpdateMapPatch.farmManager = farmManager;
+        public updateMapPatch(CustomFarmManager farmManager) {
+            updateMapPatch.farmManager = farmManager;
         }
 
         public static void Postfix(FarmHouse __instance) {

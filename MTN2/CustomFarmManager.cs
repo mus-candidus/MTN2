@@ -18,11 +18,12 @@ namespace MTN2
     /// of CustomFarm classes and manipulates / gathers the data accordingly.
     /// </summary>
     public class CustomFarmManager {
-        protected int LoadedIndex = 0;
+        protected int LoadedIndex = -1;
         protected int SelectedIndex = 0;
         public List<CustomFarm> FarmList { get; private set; }
         public bool NoDebris { get; set; } = false;
         public bool Canon { get; private set; } = true;
+        public int ScienceHouseIndex { get; private set; }
 
         /// <summary>
         /// Gets the custom farm that the player current has selected
@@ -39,6 +40,7 @@ namespace MTN2
         /// </summary>
         public CustomFarm LoadedFarm {
             get {
+                if (LoadedIndex == -1) return null;
                 return FarmList[LoadedIndex];
             }
         }
@@ -55,6 +57,12 @@ namespace MTN2
         public Interaction RabbitShrine {
             get {
                 return LoadedFarm.RabbitShrine.PointOfInteraction;
+            }
+        }
+
+        public Interaction PetWaterBowl {
+            get {
+                return LoadedFarm.PetWaterBowl.PointOfInteraction;
             }
         }
 
@@ -114,9 +122,10 @@ namespace MTN2
         public void UpdateSelectedFarm(string farmName) {
             if (!farmName.StartsWith("MTN_")) {
                 Canon = true;
-                SelectedIndex = 0;
+                SelectedIndex = -1;
                 return;
             }
+            Canon = false;
             farmName = farmName.Substring(3);
             for (int i = 0; i < FarmList.Count; i++) {
                 if (FarmList[i].Name == farmName) {
@@ -124,7 +133,7 @@ namespace MTN2
                     return;
                 }
             }
-            SelectedIndex = 0;
+            SelectedIndex = -1;
             return;
         }
 
@@ -133,7 +142,15 @@ namespace MTN2
         /// as a confirmation.
         /// </summary>
         public void LoadCustomFarm() {
-            LoadedIndex = SelectedIndex;
+            if (SelectedIndex == -1) {
+                LoadedIndex = 0;
+                Canon = true;
+                return;
+            } else {
+                LoadedIndex = SelectedIndex;
+                Canon = false;
+                return;
+            }
         }
 
         /// <summary>
@@ -142,7 +159,17 @@ namespace MTN2
         /// <param name="whichFarm"></param>
         public void LoadCustomFarm(int whichFarm) {
             if (whichFarm < 5) {
-                NoDebris = true;
+                Canon = true;
+                return;
+            } else {
+                for (int i = 0; i < FarmList.Count; i++) {
+                    if (FarmList[i].ID == whichFarm) {
+                        LoadedIndex = i;
+                        break;
+                    }
+                }
+                Canon = false;
+                return;
             }
         }
         
@@ -267,6 +294,10 @@ namespace MTN2
             }
             Interaction POI = LoadedFarm.GrandpaShrine.PointOfInteraction;
             return new Vector2(POI.X * 64f, POI.Y * 64f);
+        }
+
+        public void SetScienceIndex(int index) {
+            ScienceHouseIndex = index;
         }
     }
 }

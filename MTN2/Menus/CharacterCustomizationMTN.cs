@@ -27,7 +27,7 @@ namespace MTN2.Menus {
         public ClickableTextureComponent scrollBar;
         public Rectangle scrollBarRunner;
         public int currentItemIndex;
-        public string prevClickedFarmTypeBtn = "Standard";
+        public int previousItemIndex;
         public string lastClickedFarmTypeBtn = "Standard";
         public bool allowCabinsSeperate = true;
         public bool allowCabinsClose = true;
@@ -718,7 +718,7 @@ namespace MTN2.Menus {
             ///
             if (name.StartsWith("MTN_")) {
                 if (source == CharacterCustomization.Source.NewGame || source == CharacterCustomization.Source.HostNewFarm) {
-                    Game1.whichFarm = 10;
+                    Game1.whichFarm = 20;
                     Game1.spawnMonstersAtNight = false;
                     adjustWhichFarmType(name);
                 }
@@ -1433,7 +1433,7 @@ namespace MTN2.Menus {
                 Point baseFarmButton = new Point(this.xPositionOnScreen + this.width + 4 + 8, this.yPositionOnScreen + IClickableMenu.borderWidth * 2);
                 IClickableMenu.drawTextureBox(b, this.farmTypeButtons[0].bounds.X - 16, this.farmTypeButtons[0].bounds.Y - 20, 120, 476, Color.White);
 
-                if (lastClickedFarmTypeBtn != prevClickedFarmTypeBtn) {
+                if (previousItemIndex != currentItemIndex) {
                     int count = 0;
                     farmTypeButtons.Clear();
                     while (count < 5) {
@@ -1447,7 +1447,7 @@ namespace MTN2.Menus {
                         count++;
                     }
                 }
-                prevClickedFarmTypeBtn = lastClickedFarmTypeBtn;
+                previousItemIndex = currentItemIndex;
 
                 for (int i = 0; i < 5; i++) {
                     this.farmTypeButtons[i].draw(b, this.farmTypeButtons[i].name.Contains("Gray") ? (Color.Black * 0.5f) : Color.White, 0.88f);

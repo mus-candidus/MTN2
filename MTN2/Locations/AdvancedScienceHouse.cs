@@ -115,7 +115,7 @@ namespace MTN2.Locations
 
             switch (questionAndAnswer) {
                 case "carpenter_Construct":
-                    Game1.activeClickableMenu = (IClickableMenu)new CarpenterMenuMTN(false);
+                    Game1.activeClickableMenu = new CarpenterMenu(false);
                     break;
                 case "carpenter_HouseDesign":
                     Game1.drawDialogue(Game1.getCharacterFromName("Robin", false), "Oh, I'm sorry but the architect who lived in town has been away for quite sometimes. I believe he went to see his friend who lives far away. Strangely enough, his friend calls himself \"Pickles\", kind of a strange guy.");

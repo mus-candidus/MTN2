@@ -9,6 +9,8 @@ namespace MTN2.MapData {
         public string MapName { get; set; }
         public List<Warp> WarpPoints { get; set; }
 
+        public Neighbor() { }
+
         public Neighbor(string MapName) {
             this.MapName = MapName;
             WarpPoints = new List<Warp>();

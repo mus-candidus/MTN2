@@ -16,6 +16,8 @@ namespace MTN2.MapData
         //The name of the map.
         public string Name { get; set; } = "Untitled";
 
+        public MapFile() { }
+
         public MapFile(string FileName) {
             this.FileName = FileName;
             MapType = "GameLocation";
