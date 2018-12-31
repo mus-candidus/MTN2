@@ -13,13 +13,13 @@ namespace MTN2
 {
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod {
-
-        private List<Patch> Patches;
         protected HarmonyInstance Harmony;
         protected CustomFarmManager FarmManager;
+        protected PatchManager PatchManager;
 
         public ModEntry() {
             FarmManager = new CustomFarmManager();
+            PatchManager = new PatchManager(FarmManager);
         }
 
         /// <summary>
@@ -29,8 +29,10 @@ namespace MTN2
         public override void Entry(IModHelper helper) {
             Monitor.Log("Begin: Harmony Patching", LogLevel.Trace);
             Harmony = HarmonyInstance.Create("MTN.SgtPickles");
-
-
+            PatchManager.Initialize(helper, Monitor);
+            PatchManager.Apply(Harmony);
+            Helper.Events.GameLoop.GameLaunched += Populate;
+            Helper.Events.Display.MenuChanged += NewGameMenu;
             return;
         }
 

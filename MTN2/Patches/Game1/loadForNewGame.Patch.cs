@@ -12,18 +12,33 @@ using MTN2.MapData;
 namespace MTN2.Patches.Game1Patches {
     /// <summary>
     /// Patches the method Game1.loadForNewGame to allow the implementation
-    /// of custom farms, overriding existing maps, and 
+    /// of custom farms, overriding existing maps, and additional maps pertaining to
+    /// the content pack of said custom farm.
     /// </summary>
     public class loadForNewGamePatch {
 
         private static CustomFarmManager farmManager;
         private static IMonitor Monitor;
 
+        /// <summary>
+        /// Constructor. Awkward method of setting references needed. However, Harmony patches
+        /// are required to be static. Thus we must break good Object Orientated practices.
+        /// </summary>
+        /// <param name="farmManager">The class controlling information pertaining to the custom farms (and the loaded farm).</param>
+        /// <param name="Monitor">SMAPI's IMonitor, to print out useful information to user.</param>
         public loadForNewGamePatch(CustomFarmManager farmManager, IMonitor Monitor) {
             loadForNewGamePatch.farmManager = farmManager;
             loadForNewGamePatch.Monitor = Monitor;
         }
 
+        /// <summary>
+        /// Postfix method. Occurs after the original method of Game1.loadForNewGame is executed.
+        /// 
+        /// Loads the custom farm in, if it hasn't already (saved game is being loaded) into farmManager.
+        /// Sets the Farm map with the correct map (the custom map that was requested).
+        /// Loads additional maps that are apart of custom farm's content pack.
+        /// Loads map overrides that are apart of custom farm's content pack.
+        /// </summary>
         public static void Postfix() {
             int farmIndex;
             Map map;
@@ -155,6 +170,5 @@ namespace MTN2.Patches.Game1Patches {
                 }
             }
         }
-    }
     }
 }

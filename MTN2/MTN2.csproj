@@ -78,7 +78,19 @@
     <Compile Include="Menus\CharacterCustomizationMTN.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Patch.cs" />
+    <Compile Include="Patches\Event\SetExitLocation.cs" />
+    <Compile Include="Patches\FarmHouse\Constructor.cs" />
+    <Compile Include="Patches\FarmHouse\GetPorchStandingSpot.cs" />
+    <Compile Include="Patches\FarmHouse\UpdateMap.cs" />
+    <Compile Include="Patches\Farm\CheckAction.cs" />
+    <Compile Include="Patches\Farm\Constructor.cs" />
+    <Compile Include="Patches\Farm\Draw.cs" />
+    <Compile Include="Patches\Farm\GetFrontDoorPositionForFarmer.cs" />
+    <Compile Include="Patches\Farm\LeftClick.cs" />
+    <Compile Include="Patches\Farm\ResetLocalState.cs" />
+    <Compile Include="Patches\Farm\UpdateWhenCurrentLocation.cs" />
     <Compile Include="Patches\Game1\loadForNewGame.Patch.cs" />
+    <Compile Include="PatchManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

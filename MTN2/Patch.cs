@@ -22,7 +22,8 @@ namespace MTN2 {
     /// This style of patching enables cross-platform support.
     /// </summary>
     public class Patch {
-        private readonly Mod instance;
+        private readonly object instance;
+        private readonly IModHelper helper;
         private string sdvType;
         private string original;
         private PatchType patchType;
@@ -39,8 +40,9 @@ namespace MTN2 {
         /// <param name="sdvType">The class containing the method/constructor to be patched.</param>
         /// <param name="original">The method/constructor to be patched.</param>
         /// <param name="patchType">The type of code we are targetting. Method, or Constructor?</param>
-        public Patch(Mod instance, string sdvType, string original, PatchType patchType) {
+        public Patch(IModHelper helper, string sdvType, string original, PatchType patchType, object instance) {
             this.instance = instance;
+            this.helper = helper;
             this.sdvType = sdvType;
             this.original = original;
             this.patchType = patchType;
@@ -69,9 +71,9 @@ namespace MTN2 {
         public void Apply(HarmonyInstance harmony) {
             ConstructorInfo Constructor = null;
             MethodInfo Original = null;
-            MethodInfo Prefix = (prefix) ? instance.Helper.Reflection.GetMethod(type, "Prefix").MethodInfo : null;
-            MethodInfo Transpile = (transpiler) ? instance.Helper.Reflection.GetMethod(type, "Transpiler").MethodInfo : null;
-            MethodInfo Postfix = (postfix) ? instance.Helper.Reflection.GetMethod(type, "Postfix").MethodInfo : null;
+            MethodInfo Prefix = (prefix) ? helper.Reflection.GetMethod(type, "Prefix").MethodInfo : null;
+            MethodInfo Transpile = (transpiler) ? helper.Reflection.GetMethod(type, "Transpiler").MethodInfo : null;
+            MethodInfo Postfix = (postfix) ? helper.Reflection.GetMethod(type, "Postfix").MethodInfo : null;
 
             if (patchType == PatchType.Constructor) {
                 Constructor = AccessTools.Constructor(getTypeSDV(sdvType), parameters);

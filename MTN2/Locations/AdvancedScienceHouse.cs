@@ -1,6 +1,8 @@
 ﻿using Harmony;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Locations;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +23,10 @@ namespace MTN2.Locations
         public AdvancedScienceHouse(string mapPath, string mapName) : base(mapPath, mapName) { }
 
         public AdvancedScienceHouse(string mapPath, string mapName, GameLocation oldScienceHouse) : base(mapPath, mapName) {
-            if (oldScienceHouse != null)
-                import(oldScienceHouse);
+            if (oldScienceHouse != null) Import(oldScienceHouse);
         }
 
-        public void import(GameLocation oldLocation) {
+        public void Import(GameLocation oldLocation) {
             BaseLocation = oldLocation;
 
             characters.Set(oldLocation.characters);
@@ -34,7 +35,7 @@ namespace MTN2.Locations
             Traverse.Create(this).Field("terrainFeatures").SetValue(oldLocation.terrainFeatures);
         }
 
-        public GameLocation export() {
+        public GameLocation Export() {
             GameLocation results = BaseLocation;
 
             results.characters.Set(characters);
@@ -113,22 +114,13 @@ namespace MTN2.Locations
             if (questionAndAnswer == null) return false;
 
             switch (questionAndAnswer) {
-                //case "carpenter_CommunityUpgrade":
-                //    communityUpgradeOffer();
-                //    break;
                 case "carpenter_Construct":
-                    Game1.activeClickableMenu = (IClickableMenu)new CarpenterMenuWithCustoms(false);
+                    Game1.activeClickableMenu = (IClickableMenu)new CarpenterMenuMTN(false);
                     break;
                 case "carpenter_HouseDesign":
-                    //Game1.activeClickableMenu = new CarpenterMenuHouseDesign();
                     Game1.drawDialogue(Game1.getCharacterFromName("Robin", false), "Oh, I'm sorry but the architect who lived in town has been away for quite sometimes. I believe he went to see his friend who lives far away. Strangely enough, his friend calls himself \"Pickles\", kind of a strange guy.");
                     break;
-                //case "carpenter_Shop":
-                //    break;
-                //case "carpenter_Upgrade":
-                //    break;
                 default:
-                    //return false;
                     return base.answerDialogueAction(questionAndAnswer, questionParams);
             }
             return true;
