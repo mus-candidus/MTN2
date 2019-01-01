@@ -72,6 +72,18 @@ namespace MTN2
             }
         }
 
+        public Point GreenHouseDoor {
+            get {
+                return new Point(LoadedFarm.GreenHouse.PointOfInteraction.X, LoadedFarm.FarmHouse.PointOfInteraction.Y);
+            }
+        }
+
+        public Point FarmCaveOpening {
+            get {
+                return new Point(LoadedFarm.FarmCave.PointOfInteraction.X, LoadedFarm.FarmCave.PointOfInteraction.Y);
+            }
+        }
+
         public int FurnitureLayout {
             get {
                 return LoadedFarm.FurnitureLayoutFromCanon;
@@ -126,7 +138,7 @@ namespace MTN2
                 return;
             }
             Canon = false;
-            farmName = farmName.Substring(3);
+            farmName = farmName.Substring(4);
             for (int i = 0; i < FarmList.Count; i++) {
                 if (FarmList[i].Name == farmName) {
                     SelectedIndex = i;
@@ -256,7 +268,7 @@ namespace MTN2
             if (Canon) {
                 return GreenHouseCoordsCanon();
             }
-            Placement Coordinates = LoadedFarm.FarmHouse.Coordinates;
+            Placement Coordinates = LoadedFarm.GreenHouse.Coordinates;
             return new Vector2(Coordinates.X * 64f, Coordinates.Y * 64f);
         }
 

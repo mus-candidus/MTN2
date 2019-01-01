@@ -718,7 +718,7 @@ namespace MTN2.Menus {
             ///
             if (name.StartsWith("MTN_")) {
                 if (source == CharacterCustomization.Source.NewGame || source == CharacterCustomization.Source.HostNewFarm) {
-                    Game1.whichFarm = 20;
+                    //Game1.whichFarm = 20;
                     Game1.spawnMonstersAtNight = false;
                     adjustWhichFarmType(name);
                 }
@@ -809,6 +809,7 @@ namespace MTN2.Menus {
         private void adjustWhichFarmType(string name) {
             lastClickedFarmTypeBtn = name;
             farmManager.UpdateSelectedFarm(name);
+            Game1.whichFarm = farmManager.SelectedFarm.ID;
             adjustCabinSettings();
         }
 

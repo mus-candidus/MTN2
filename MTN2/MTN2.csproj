@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MTN2</RootNamespace>
-    <AssemblyName>MTN2</AssemblyName>
+    <AssemblyName>MTN</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -77,7 +77,9 @@
     <Compile Include="MapData\Structs\Warp.cs" />
     <Compile Include="Menus\CharacterCustomizationMTN.cs" />
     <Compile Include="ModEntry.cs" />
+    <Compile Include="MTNMessage.cs" />
     <Compile Include="Patch.cs" />
+    <Compile Include="PatchConfig.cs" />
     <Compile Include="Patches\Event\SetExitLocation.cs" />
     <Compile Include="Patches\FarmHouse\Constructor.cs" />
     <Compile Include="Patches\FarmHouse\GetPorchStandingSpot.cs" />
@@ -108,7 +110,11 @@
     <None Include="manifest.json" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="res\missingIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Pathoschild.Stardew.ModBuildConfig.2.2.0\analyzers\dotnet\cs\StardewModdingAPI.ModBuildConfig.Analyzer.dll" />
   </ItemGroup>

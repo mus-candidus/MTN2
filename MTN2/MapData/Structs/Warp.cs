@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MTN2.MapData {
-    public struct Warp {
-        public string TargetMap { get; set; }
+    public class Warp {
+        public string TargetMap { get; set; } = "Farm";
         public int FromX { get; set; }
         public int FromY { get; set; }
         public int ToX { get; set; }
         public int ToY { get; set; }
+
+        public Warp() { }
 
         public Warp(string TargetMap, int FromX, int FromY, int ToX, int ToY) {
             this.TargetMap = TargetMap;
