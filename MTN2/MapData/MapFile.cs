@@ -24,10 +24,23 @@ namespace MTN2.MapData
             Name = "Untitled";
         }
 
+        public MapFile(string FileName, string Name, FileType fileType) {
+            this.FileName = FileName;
+            this.Name = Name;
+            this.FileType = fileType;
+        }
+
         public MapFile(string FileName, string MapType, string Name) {
             this.FileName = FileName;
             this.MapType = MapType;
             this.Name = Name;
+        }
+
+        public MapFile(string FileName, string MapType, string Name, FileType fileType) {
+            this.FileName = FileName;
+            this.MapType = MapType;
+            this.Name = Name;
+            this.FileType = fileType;
         }
     }
 }

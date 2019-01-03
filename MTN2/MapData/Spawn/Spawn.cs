@@ -1,9 +1,4 @@
 ﻿using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MTN2.MapData {
     public class Spawn {
@@ -33,10 +28,10 @@ namespace MTN2.MapData {
         //Cooldown Parameters
         public int CooldownMin { get; set; } = 0;
         public int CooldownMax { get; set; } = 0;
-        public int DaysLeft { get; set; } = 0;
+        public int DaysLeft { get; set; } = 1;
 
         //Profession Requirement
-        public int SkillLevel { get; set; } = 0;
+        public int SkillLevel { get; set; } = 1;
 
         public Spawn() {
             RainModifier = new Modifier(0, 1);

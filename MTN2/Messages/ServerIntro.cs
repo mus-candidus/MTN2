@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTN2
+namespace MTN2.Messages
 {
-    public class MTNMessage
+    public class ServerIntro
     {
         public int Mode { get; set; }
     }

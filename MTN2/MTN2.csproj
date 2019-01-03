@@ -57,12 +57,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compatibility\Version1\additionalMap.cs" />
+    <Compile Include="Compatibility\Version1\additionalTileSheet.cs" />
+    <Compile Include="Compatibility\Version1\CustomFarmVer1.cs" />
+    <Compile Include="Compatibility\Version1\forageSpawns.cs" />
+    <Compile Include="Compatibility\Version1\overrideMap.cs" />
+    <Compile Include="Compatibility\Version1\resourceSpawns.cs" />
+    <Compile Include="Compatibility\Version1\spawn.cs" />
+    <Compile Include="Compatibility\Version1\StructureInfo.cs" />
     <Compile Include="CustomFarm.cs" />
     <Compile Include="CustomFarmManager.cs" />
     <Compile Include="Locations\AdvancedScienceHouse.cs" />
     <Compile Include="MapData\FileType.cs" />
-    <Compile Include="MapData\Forage.cs" />
-    <Compile Include="MapData\Ore.cs" />
+    <Compile Include="MapData\Spawn\Forage.cs" />
+    <Compile Include="MapData\Spawn\Ore.cs" />
     <Compile Include="MapData\Spawn\LargeDebris.cs" />
     <Compile Include="MapData\Spawn\Resource.cs" />
     <Compile Include="MapData\Structs\Modifier.cs" />
@@ -76,8 +84,8 @@
     <Compile Include="MapData\Structs\Interaction.cs" />
     <Compile Include="MapData\Structs\Warp.cs" />
     <Compile Include="Menus\CharacterCustomizationMTN.cs" />
-    <Compile Include="ModEntry.cs" />
-    <Compile Include="MTNMessage.cs" />
+    <Compile Include="MTN.cs" />
+    <Compile Include="Messages\ServerIntro.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="PatchConfig.cs" />
     <Compile Include="Patches\Event\SetExitLocation.cs" />
@@ -105,6 +113,7 @@
     <Compile Include="Patches\WorldChangeEvent\setUp.cs" />
     <Compile Include="PatchManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpawnManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json" />

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using MTN2.Locations;
 using MTN2.MapData;
 using MTN2.Menus;
+using MTN2.Messages;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -17,17 +18,19 @@ using StardewValley.Menus;
 namespace MTN2
 {
     /// <summary>The mod entry point.</summary>
-    public class ModEntry : Mod {
+    public class MTN : Mod {
         protected HarmonyInstance Harmony;
         protected CustomFarmManager FarmManager;
         protected PatchManager PatchManager;
+        protected SpawnManager SpawnManager;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ModEntry() {
+        public MTN() {
             FarmManager = new CustomFarmManager();
             PatchManager = new PatchManager(FarmManager);
+            SpawnManager = new SpawnManager(FarmManager);
         }
 
         /// <summary>
@@ -158,7 +161,7 @@ namespace MTN2
         /// <param name="e"></param>
         private void BeforeServerIntroduction(object sender, EventArgs e) {
             if (Game1.multiplayerMode != 2) return;
-            MTNMessage message = new MTNMessage();
+            ServerIntro message = new ServerIntro();
             message.Mode = Game1.whichFarm;
             Helper.Multiplayer.SendMessage(message, "MTNBeforeServerIntro", new[] { this.ModManifest.UniqueID });
         }
@@ -171,7 +174,7 @@ namespace MTN2
         private void MessageRecieved(object sender, ModMessageReceivedEventArgs e) {
             if (e.FromModID == "SgtPickles.MTN") {
                 if (e.Type == "MTNBeforeServerIntro") {
-                    MTNMessage newMsg = e.ReadAs<MTNMessage>();
+                    ServerIntro newMsg = e.ReadAs<ServerIntro>();
                     Game1.whichFarm = newMsg.Mode;
                     FarmManager.LoadCustomFarm(newMsg.Mode);
                 }

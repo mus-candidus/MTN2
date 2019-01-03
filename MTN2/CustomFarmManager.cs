@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MTN2.Compatibility;
 using MTN2.MapData;
 using StardewModdingAPI;
 using System;
@@ -32,6 +33,7 @@ namespace MTN2
         /// </summary>
         public CustomFarm SelectedFarm {
             get {
+                if (Canon) return null;
                 return FarmList[SelectedIndex];
             }
         }
@@ -112,7 +114,11 @@ namespace MTN2
             foreach (IContentPack ContentPack in Helper.ContentPacks.GetOwned()) {
                 Monitor.Log($"Reading content pack: {ContentPack.Manifest.Name} {ContentPack.Manifest.Version}.");
                 FarmData = ContentPack.ReadJsonFile<CustomFarm>("farmType.json");
-                
+                if (FarmData.Version < 2.0) {
+                    FarmData = PopulateOld(ContentPack, Monitor);
+                }
+
+
                 IconFile = Path.Combine(ContentPack.DirectoryPath, "icon.png");
                 if(File.Exists(IconFile)) {
                     FarmData.IconSource = ContentPack.LoadAsset<Texture2D>("icon.png");
@@ -125,6 +131,24 @@ namespace MTN2
             }
 
             return;
+        }
+
+        /// <summary>
+        /// Converts a content pack with a farmType.json that is verison 1.0 or 1.1 to
+        /// version 2.0
+        /// </summary>
+        /// <param name="contentPack">A SMAPI Content Pack</param>
+        /// <param name="monitor">SMAPI's IMonitor, to print useful information</param>
+        /// <returns></returns>
+        private CustomFarm PopulateOld(IContentPack contentPack, IMonitor monitor) {
+            CustomFarmVer1 oldVersion;
+            CustomFarm convertedFarm;
+
+            monitor.Log("$\tContent Pack is for MTN1. Using Backwards Compatibility.");
+            oldVersion = contentPack.ReadJsonFile<CustomFarmVer1>("farmType.json");
+            convertedFarm = new CustomFarm();
+            CustomFarmVer1.Convert(convertedFarm, oldVersion);
+            return convertedFarm;
         }
 
         /// <summary>

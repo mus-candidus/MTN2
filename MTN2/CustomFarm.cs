@@ -57,6 +57,8 @@ namespace MTN2
         //Behavioral
         public LargeDebris ResourceClumps { get; set; }
         public Forage Foraging { get; set; }
+        public Ore Ores { get; set; }
+        public bool SpawnMonstersAtNight = false;
 
         //Furniture
         public List<Furniture> FurnitureList { get; set; }

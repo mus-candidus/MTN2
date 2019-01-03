@@ -809,12 +809,18 @@ namespace MTN2.Menus {
         private void adjustWhichFarmType(string name) {
             lastClickedFarmTypeBtn = name;
             farmManager.UpdateSelectedFarm(name);
-            Game1.whichFarm = farmManager.SelectedFarm.ID;
+            if (!farmManager.Canon) Game1.whichFarm = farmManager.SelectedFarm.ID;
             adjustCabinSettings();
         }
 
         //Added for support. REEEEE
         private void adjustCabinSettings() {
+            if (farmManager.Canon) {
+                Game1.startingCabins = 0;
+                allowCabinsClose = true;
+                allowCabinsSeperate = true;
+                return;
+            }
             if (farmManager.SelectedFarm.CabinCapacity == 0) {
                 Game1.startingCabins = 0;
                 return;
@@ -824,7 +830,6 @@ namespace MTN2.Menus {
 
             allowCabinsClose = farmManager.SelectedFarm.AllowClose;
             allowCabinsSeperate = farmManager.SelectedFarm.AllowSeperate;
-            //Memory.selectedFarm.cabinCapacity;
         }
 
         ////////////////
