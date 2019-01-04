@@ -22,12 +22,16 @@ namespace MTN2.MapData {
         }
 
         public override void SpawnAll(int Attempts) {
+            int Amount;
             for (int i = 0; i < ResourceList.Count; i++) {
-                if (!ResourceList[i].Roll()) continue;
-                if (ResourceList[i].Boundary == SpawnType.areaBound) {
-                    AreaBoundLogic(ResourceList[i], Attempts, Width, Height);
-                } else if (ResourceList[i].Boundary == SpawnType.pathTileBound) {
-                    TileBoundLogic(ResourceList[i], Attempts, Width, Height);
+                Amount = ResourceList[i].GenerateAmount();
+                for (int j = 0; j < Amount; j++) {
+                    if (!ResourceList[i].Roll()) continue;
+                    if (ResourceList[i].Boundary == SpawnType.areaBound) {
+                        AreaBoundLogic(ResourceList[i], Attempts, Width, Height);
+                    } else if (ResourceList[i].Boundary == SpawnType.pathTileBound) {
+                        TileBoundLogic(ResourceList[i], Attempts, Width, Height);
+                    }
                 }
             }
         }
@@ -35,11 +39,14 @@ namespace MTN2.MapData {
         public override void SpawnItem(int Attempts, int index) {
             if (index >= ResourceList.Count) return;
 
-            if (!ResourceList[index].Roll()) return;
-            if (ResourceList[index].Boundary == SpawnType.areaBound) {
-                AreaBoundLogic(ResourceList[index], Attempts, Width, Height);
-            } else if (ResourceList[index].Boundary == SpawnType.pathTileBound) {
-                TileBoundLogic(ResourceList[index], Attempts, Width, Height);
+            int Amount = ResourceList[index].GenerateAmount();
+            for (int i = 0; i < Amount; i++) {
+                if (!ResourceList[index].Roll()) continue;
+                if (ResourceList[index].Boundary == SpawnType.areaBound) {
+                    AreaBoundLogic(ResourceList[index], Attempts, Width, Height);
+                } else if (ResourceList[index].Boundary == SpawnType.pathTileBound) {
+                    TileBoundLogic(ResourceList[index], Attempts, Width, Height);
+                }
             }
         }
     }

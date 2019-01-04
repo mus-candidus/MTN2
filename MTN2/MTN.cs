@@ -45,9 +45,11 @@ namespace MTN2
 
             Helper.Events.GameLoop.UpdateTicked += NewGameMenu;
             Helper.Events.GameLoop.GameLaunched += Populate;
+            Helper.Events.GameLoop.ReturnedToTitle += ClearData;
             Helper.Events.GameLoop.SaveLoaded += OverrideWarps;
             Helper.Events.GameLoop.SaveLoaded += InitialScienceLab;
             Helper.Events.GameLoop.Saving += BeforeSaveScienceLab;
+            Helper.Events.GameLoop.Saving += SpawnManager.ManageAll;
             Helper.Events.GameLoop.Saved += AfterSaveScienceLab;
             Helper.Events.Multiplayer.PeerContextReceived += BeforeServerIntroduction;
             Helper.Events.Multiplayer.ModMessageReceived += MessageRecieved;
@@ -57,7 +59,16 @@ namespace MTN2
         }
 
         /// <summary>
-        /// Populates the CustomFarmManager with the installed Content Packs registered for MTN.
+        /// Resets various managers after the user quits the game.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearData(object sender, EventArgs e) {
+            FarmManager.Reset();
+        }
+
+        /// <summary>
+        /// Populates the <see cref="CustomFarmManager"/> with the installed Content Packs registered for MTN.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

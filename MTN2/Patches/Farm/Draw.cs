@@ -77,7 +77,7 @@ namespace MTN2.Patches.FarmPatches
             if (Game1.mailbox.Count > 0) {
                 float yOffset = 4f * (float)Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2);
                 b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, farmManager.MailboxNotification(0f, (2.25f * -64f) + yOffset, false)), new Rectangle?(new Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, farmManager.MailBoxNotifyLayerDepth(false));
-                b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, farmManager.MailboxNotification(0.5626f, (1.5f * -64f) + yOffset, true)), new Rectangle?(new Rectangle(189, 423, 15, 13)), Color.White, 0f, new Vector2(7f, 6f), 4f, SpriteEffects.None, farmManager.MailBoxNotifyLayerDepth(true));
+                b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, farmManager.MailboxNotification(0.5626f * 64f, (1.5f * -64f) + yOffset, true)), new Rectangle?(new Rectangle(189, 423, 15, 13)), Color.White, 0f, new Vector2(7f, 6f), 4f, SpriteEffects.None, farmManager.MailBoxNotifyLayerDepth(true));
             }
 
             //Shrine note

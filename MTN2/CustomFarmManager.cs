@@ -310,7 +310,7 @@ namespace MTN2
 
         public Vector2 MailboxNotification(float xOffset, float yOffset, bool Option) {
             if (Canon) {
-                return new Vector2((Option) ? 4388f : 4352f, ((Option) ? 928 : 880f) + yOffset);
+                return new Vector2((Option) ? 4388f : 4352f, ((Option) ? 928f : 880f) + yOffset);
             }
             Interaction POI = LoadedFarm.MailBox.PointOfInteraction;
             return new Vector2((POI.X * 64f) + xOffset, (POI.Y * 64f) + yOffset);
@@ -334,6 +334,12 @@ namespace MTN2
 
         public void SetScienceIndex(int index) {
             ScienceHouseIndex = index;
+        }
+
+        public void Reset() {
+            SelectedIndex = 0;
+            LoadedIndex = -1;
+            Canon = true;
         }
     }
 }

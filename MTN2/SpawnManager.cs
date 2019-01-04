@@ -20,6 +20,12 @@ namespace MTN2 {
             ManageLargeDebris();
         }
 
+        public void ManageAll(object sender, EventArgs e) {
+            ManageForage();
+            ManageOre();
+            ManageLargeDebris();
+        }
+
         public void ManageForage() {
             if (farmManager.Canon) return;
             if (farmManager.LoadedFarm.Foraging == null) return;
