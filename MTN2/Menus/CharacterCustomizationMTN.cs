@@ -944,7 +944,7 @@ namespace MTN2.Menus {
             }
 
             //Up/Down Arrow Button & NoDebris Button
-            if (downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, farmTypeButtons.Count - 5)) {
+            if (downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, allFarmButtons.Count - 5)) {
                 downArrowPressed();
             } else if (upArrow.containsPoint(x, y) && currentItemIndex > 0) {
                 upArrowPressed();

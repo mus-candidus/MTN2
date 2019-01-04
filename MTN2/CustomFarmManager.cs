@@ -144,7 +144,7 @@ namespace MTN2
             CustomFarmVer1 oldVersion;
             CustomFarm convertedFarm;
 
-            monitor.Log("$\tContent Pack is for MTN1. Using Backwards Compatibility.");
+            monitor.Log("\t - Content Pack is for MTN1. Using Backwards Compatibility.");
             oldVersion = contentPack.ReadJsonFile<CustomFarmVer1>("farmType.json");
             convertedFarm = new CustomFarm();
             CustomFarmVer1.Convert(convertedFarm, oldVersion);
