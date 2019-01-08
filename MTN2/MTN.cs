@@ -206,14 +206,14 @@ namespace MTN2
                 GameLocation farmCave = Game1.getLocationFromName("FarmCave");
                 Point farmCaveOpening = FarmManager.FarmCaveOpening;
                 farmCave.warps.Clear();
-                farmCave.warps.Add(new StardewValley.Warp(8, 12, "Farm", farmCaveOpening.X, farmCaveOpening.Y, false));
+                farmCave.warps.Add(new StardewValley.Warp(8, 12, "Farm", farmCaveOpening.X, farmCaveOpening.Y + 1, false));
             }
 
             if (FarmManager.LoadedFarm.GreenHouse != null) {
                 GameLocation greenHouse = Game1.getLocationFromName("Greenhouse");
                 Point greenHouseDoor = FarmManager.GreenHouseDoor;
                 greenHouse.warps.Clear();
-                greenHouse.warps.Add(new StardewValley.Warp(10, 24, "Farm", greenHouseDoor.X, greenHouseDoor.Y, false));
+                greenHouse.warps.Add(new StardewValley.Warp(10, 24, "Farm", greenHouseDoor.X, greenHouseDoor.Y + 1, false));
             }
         }
 
