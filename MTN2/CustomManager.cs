@@ -14,11 +14,11 @@ using xTile;
 namespace MTN2
 {
     /// <summary>
-    /// CustomFarmManager class. Performs all the nessecary operations needed to allow a custom farm (or custom farms)
-    /// to properly function. It is also built to distinguish between canon farms, or custom farms. Contains a List<T>
-    /// of CustomFarm classes and manipulates / gathers the data accordingly.
+    /// CustomManager class. Performs all the nessecary operations needed to allow a custom maps (custom farms, greenhouse, etc)
+    /// to properly function. It is also built to distinguish between canon, or custom. Contains a List<T>
+    /// of custom classes and manipulates / gathers the data accordingly.
     /// </summary>
-    public class CustomFarmManager {
+    public class CustomManager {
         protected int LoadedIndex = -1;
         protected int SelectedIndex = 0;
         public List<CustomFarm> FarmList { get; private set; }
@@ -92,10 +92,22 @@ namespace MTN2
             }
         }
 
+        public int GreenHouseEntryX {
+            get {
+                return 10;
+            }
+        }
+
+        public int GreenHouseEntryY {
+            get {
+                return 23;
+            }
+        }
+
         /// <summary>
         /// Constructor.
         /// </summary>
-        public CustomFarmManager() {
+        public CustomManager() {
             FarmList = new List<CustomFarm>();
         }
 
@@ -256,8 +268,8 @@ namespace MTN2
             if (Canon) {
                 return FarmHouseCoordsCanon(OffsetX, OffsetY);
             }
-            Placement Coordinates = LoadedFarm.FarmHouse.Coordinates;
-            return new Vector2((Coordinates.X * 64f) + OffsetX, (Coordinates.Y * 64f) + OffsetY);
+            Placement? Coordinates = LoadedFarm.FarmHouse.Coordinates;
+            return new Vector2((Coordinates.Value.X * 64f) + OffsetX, (Coordinates.Value.Y * 64f) + OffsetY);
         }
 
         /// <summary>
@@ -292,8 +304,8 @@ namespace MTN2
             if (Canon) {
                 return GreenHouseCoordsCanon();
             }
-            Placement Coordinates = LoadedFarm.GreenHouse.Coordinates;
-            return new Vector2(Coordinates.X * 64f, Coordinates.Y * 64f);
+            Placement? Coordinates = LoadedFarm.GreenHouse.Coordinates;
+            return new Vector2(Coordinates.Value.X * 64f, Coordinates.Value.Y * 64f);
         }
 
         protected Vector2 GreenHouseCoordsCanon() {
@@ -340,6 +352,85 @@ namespace MTN2
             SelectedIndex = 0;
             LoadedIndex = -1;
             Canon = true;
+        }
+
+        public void CreateTemplate(string type, IModHelper helper, IMonitor monitor) {
+            switch (type) {
+                case "Farm":
+                    CreateFarmTemplate(helper);
+                    return;
+                default:
+                    monitor.Log("Error. Invalid input.");
+                    return;
+            }
+        }
+
+        private void CreateFarmTemplate(IModHelper helper) {
+            CustomFarm template = new CustomFarm();
+            template.ID = 25;
+            template.Name = "Example";
+            template.Description = "Example Farm_A description that appears when the player hovers over the farm icon, as they are creating a new game.";
+            template.Folder = "Example";
+            template.Icon = "fileNameOfIcon.png";
+            template.Version = 2.0f;
+            template.CabinCapacity = 3;
+            template.AllowClose = true;
+            template.AllowSeperate = true;
+            template.FarmMap = new MapFile("Farm_Example");
+            //template.AdditionalMaps
+            template.FarmHouse = new Structure(new Placement(3712.00f, 520.00f), new Interaction(64, 14));
+            template.GreenHouse = new Structure(new Placement(1600.00f, 384.00f), new Interaction(28, 15));
+            template.FarmCave = new Structure(new Placement(), new Interaction(34, 5)) {
+                Coordinates = null
+            };
+            template.ShippingBin = new Structure(new Placement(), new Interaction(71, 14)) {
+                Coordinates = null
+            };
+            template.MailBox = new Structure(new Placement(), new Interaction(68, 16)) {
+                Coordinates = null
+            };
+            template.GrandpaShrine = new Structure(new Placement(), new Interaction(8, 7)) {
+                Coordinates = null
+            };
+            template.RabbitShrine = new Structure(new Placement(), new Interaction(48, 6)) {
+                Coordinates = null
+            };
+            template.PetWaterBowl = new Structure(new Placement(), new Interaction(54, 7)) {
+                Coordinates = null
+            };
+            template.Neighbors = new List<Neighbor> {
+                new Neighbor("Backwoods") {
+                    WarpPoints = { new Warp(13, 40, 117, 0) }
+                },
+                new Neighbor("BusStop") {
+                    WarpPoints = { new Warp(-1, 22, 155, 24), new Warp(-1, 23, 155, 25) }
+                },
+                new Neighbor("Forest") {
+                    WarpPoints = { new Warp(67, -1, 116, 154) }
+                }
+            };
+            template.ResourceClumps = new LargeDebris() {
+                ResourceList = new List<Spawn> {
+                    new Spawn() {
+
+                    }
+                }
+            };
+            template.Foraging = new Forage() {
+                ResourceList = new List<Spawn> {
+                    new Spawn() {
+
+                    }
+                }
+            };
+            template.Ores = new Ore() {
+                ResourceList = new List<Spawn> {
+                    new Spawn {
+
+                    }
+                }
+            };
+            helper.Data.WriteJsonFile("farmType.json", template);
         }
     }
 }
