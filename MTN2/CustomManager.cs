@@ -79,7 +79,7 @@ namespace MTN2
 
         public Point GreenHouseDoor {
             get {
-                return new Point(LoadedFarm.GreenHouse.PointOfInteraction.X, LoadedFarm.FarmHouse.PointOfInteraction.Y);
+                return new Point(LoadedFarm.GreenHouse.PointOfInteraction.X, LoadedFarm.GreenHouse.PointOfInteraction.Y);
             }
         }
 

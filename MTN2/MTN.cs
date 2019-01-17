@@ -42,9 +42,9 @@ namespace MTN2
         public override void Entry(IModHelper helper) {
             Monitor.Log("Begin: Harmony Patching", LogLevel.Trace);
             Harmony = HarmonyInstance.Create("MTN.SgtPickles");
-            PatchManager.Initialize(helper, Monitor);
+            PatchManager.Initialize(this, Monitor);
             PatchManager.Apply(Harmony);
-
+            
             Helper.Events.GameLoop.UpdateTicked += NewGameMenu;
             Helper.Events.GameLoop.GameLaunched += Populate;
             Helper.Events.GameLoop.ReturnedToTitle += ClearData;
