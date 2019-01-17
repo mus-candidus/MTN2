@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MTN2.MapData;
+using Newtonsoft.Json;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,8 @@ namespace MTN2 {
 
         [JsonIgnore]
         public IContentPack ContentPack { get; set; }
+
+        public MapFile GreenhouseMap { get; set; }
+        public Structure Enterance { get; set; }
     }
 }

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace MTN2 {
     public class SpawnManager {
-        private readonly CustomManager customManager;
+        private readonly ICustomManager customManager;
         private int Attempts = 10;
 
-        public SpawnManager(CustomManager customManager) {
+        public SpawnManager(ICustomManager customManager) {
             this.customManager = customManager;
         }
 

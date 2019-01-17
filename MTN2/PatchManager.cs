@@ -25,12 +25,12 @@ namespace MTN2
 {
     public class PatchManager
     {
-        private readonly CustomManager customManager;
+        private readonly ICustomManager customManager;
         private IModHelper helper;
         private List<Patch> patches;
         private PatchConfig patchConfig;
 
-        public PatchManager(CustomManager customManager) {
+        public PatchManager(ICustomManager customManager) {
             this.customManager = customManager;
             patches = new List<Patch>();
         }
