@@ -19,10 +19,11 @@ namespace MTN2
 {
     /// <summary>The mod entry point.</summary>
     public class MTN : Mod {
+        protected ICustomManager CustomManager;
         protected HarmonyInstance Harmony;
-        protected CustomManager CustomManager;
-        protected PatchManager PatchManager;
+        private PatchManager PatchManager;
         protected SpawnManager SpawnManager;
+        protected Templates Template;
 
         /// <summary>
         /// Constructor
@@ -31,6 +32,7 @@ namespace MTN2
             CustomManager = new CustomManager();
             PatchManager = new PatchManager(CustomManager);
             SpawnManager = new SpawnManager(CustomManager);
+            Template = new Templates();
         }
 
         /// <summary>
@@ -40,14 +42,15 @@ namespace MTN2
         public override void Entry(IModHelper helper) {
             Monitor.Log("Begin: Harmony Patching", LogLevel.Trace);
             Harmony = HarmonyInstance.Create("MTN.SgtPickles");
-            PatchManager.Initialize(helper, Monitor);
+            PatchManager.Initialize(this, Monitor);
             PatchManager.Apply(Harmony);
-
+            
             Helper.Events.GameLoop.UpdateTicked += NewGameMenu;
             Helper.Events.GameLoop.GameLaunched += Populate;
             Helper.Events.GameLoop.ReturnedToTitle += ClearData;
             Helper.Events.GameLoop.SaveLoaded += OverrideWarps;
             Helper.Events.GameLoop.SaveLoaded += InitialScienceLab;
+            Helper.Events.GameLoop.SaveLoaded += SpawnManager.InitalizeResources;
             Helper.Events.GameLoop.Saving += BeforeSaveScienceLab;
             Helper.Events.GameLoop.Saving += SpawnManager.ManageAll;
             Helper.Events.GameLoop.Saved += AfterSaveScienceLab;
@@ -63,7 +66,8 @@ namespace MTN2
                                                          "Useful for map makers and content creators.\n" +
                                                          "Usage: CreateTemplate <string>\n" +
                                                          "- string: Can be the following:\n" +
-                                                         "  + Farm: Creates a farmType.json Template",
+                                                         "  + Farm: Creates a farmType.json Template" + 
+                                                         "  + GreenHouse: Creates a greenHouseType.json Template",
                                                          CreateTemplate);
             return;
         }
@@ -96,7 +100,7 @@ namespace MTN2
             if (Game1.activeClickableMenu is TitleMenu) {
                 if (TitleMenu.subMenu is CharacterCustomization) {
                     CharacterCustomization oldMenu = (CharacterCustomization)TitleMenu.subMenu;
-                    CharacterCustomizationMTN menu = new CharacterCustomizationMTN(CustomManager, oldMenu.source);
+                    CharacterCustomizationMTN menu = new CharacterCustomizationMTN(CustomManager, Monitor, oldMenu.source);
                     TitleMenu.subMenu = menu;
                 }
             }
@@ -170,8 +174,7 @@ namespace MTN2
                 Monitor.Log($"Invalid command.");
                 return;
             }
-            
-            CustomManager.CreateTemplate(args[0], Helper, Monitor);
+            Template.CreateTemplate(args[0], Helper, Monitor);
         }
 
         /// <summary>

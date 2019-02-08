@@ -10,18 +10,17 @@ using StardewValley.Objects;
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace MTN2
+namespace MTN2.Compatibility
 {
     /// <summary>
     /// CustomFarm Class. Contains all the information for a single custom farm map to operate. 
     /// Used primarily to retain the data. Does not perform operations itself.
     /// </summary>
-    public class CustomFarm {
+    public class CustomFarmVer2p0 {
         //Fundalmentals
         public int ID { get; set; }
         public string Name { get; set; }
-        public string DescriptionName { get; set; }
-        public string DescriptionDetails { get; set; }
+        public string Description { get; set; }
         public string Folder { get; set; }
         public string Icon { get; set; }
         public float Version { get; set; }
@@ -72,9 +71,57 @@ namespace MTN2
         public List<StardewValley.Object> ObjectList { get; set; }
         public int FurnitureLayoutFromCanon { get; set; } = -1;
 
-        //Custom Logic
-        [JsonIgnore]
-        public MtnLogic Logic { get; set; }
-        public string LogicDll { get; set; }
+        public static void Convert(CustomFarm farm, CustomFarmVer2p0 oldFarm) {
+            farm.ID = oldFarm.ID;
+            farm.Name = oldFarm.Name;
+
+            string[] description = oldFarm.Description.Split('_');
+            if (description.Length == 0) {
+                farm.DescriptionName = "MissingName";
+                farm.DescriptionDetails = "MissingDetails";
+            } else if (description.Length == 1) {
+                farm.DescriptionName = "MissingName";
+                farm.DescriptionDetails = description[0];
+            } else {
+                farm.DescriptionName = description[0];
+                farm.DescriptionDetails = description[1];
+            }
+
+            farm.Folder = oldFarm.Folder;
+            farm.Icon = oldFarm.Icon;
+            farm.Version = 2.1f;
+
+            farm.StartingGreenHouse = oldFarm.StartingGreenHouse;
+
+            farm.CabinCapacity = oldFarm.CabinCapacity;
+            farm.AllowClose = oldFarm.AllowClose;
+            farm.AllowSeperate = oldFarm.AllowSeperate;
+
+            farm.FarmMap = oldFarm.FarmMap;
+            farm.AdditionalMaps = oldFarm.AdditionalMaps;
+
+            farm.FarmHouse = oldFarm.FarmHouse;
+            farm.GreenHouse = oldFarm.GreenHouse;
+            farm.FarmCave = oldFarm.FarmCave;
+            farm.ShippingBin = oldFarm.ShippingBin;
+            farm.MailBox = oldFarm.MailBox;
+            farm.GrandpaShrine = oldFarm.GrandpaShrine;
+            farm.RabbitShrine = oldFarm.RabbitShrine;
+            farm.PetWaterBowl = oldFarm.PetWaterBowl;
+
+            farm.Neighbors = oldFarm.Neighbors;
+
+            farm.Overrides = oldFarm.Overrides;
+
+            farm.ResourceClumps = oldFarm.ResourceClumps;
+            farm.Foraging = oldFarm.Foraging;
+            farm.Ores = oldFarm.Ores;
+            farm.SpawnMonstersAtNight = oldFarm.SpawnMonstersAtNight;
+
+            farm.FurnitureList = oldFarm.FurnitureList;
+            farm.ObjectList = oldFarm.ObjectList;
+            farm.FurnitureLayoutFromCanon = oldFarm.FurnitureLayoutFromCanon;
+            return;
+        }
     }
 }

@@ -38,7 +38,7 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="0Harmony, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\0Harmony.dll</HintPath>
     </Reference>
@@ -61,6 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="Compatibility\CustomFarmVer2p0.cs" />
     <Compile Include="Compatibility\Version1\additionalMap.cs" />
     <Compile Include="Compatibility\Version1\additionalTileSheet.cs" />
     <Compile Include="Compatibility\Version1\CustomFarmVer1.cs" />
@@ -90,9 +92,11 @@
     <Compile Include="MapData\Structure.cs" />
     <Compile Include="MapData\Structs\Interaction.cs" />
     <Compile Include="MapData\Structs\Warp.cs" />
+    <Compile Include="MtnLogic.cs" />
     <Compile Include="Menus\CharacterCustomizationMTN.cs" />
     <Compile Include="MTN.cs" />
     <Compile Include="Messages\ServerIntro.cs" />
+    <Compile Include="ObjectToDictionaryHelper.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="PatchConfig.cs" />
     <Compile Include="Patches\Event\SetExitLocation.cs" />
@@ -122,6 +126,7 @@
     <Compile Include="PatchManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpawnManager.cs" />
+    <Compile Include="Templates.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json" />

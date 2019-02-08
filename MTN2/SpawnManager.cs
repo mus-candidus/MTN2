@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace MTN2 {
     public class SpawnManager {
-        private readonly CustomManager customManager;
+        private readonly ICustomManager customManager;
         private int Attempts = 10;
 
-        public SpawnManager(CustomManager customManager) {
+        public SpawnManager(ICustomManager customManager) {
             this.customManager = customManager;
         }
 
@@ -21,9 +21,18 @@ namespace MTN2 {
         }
 
         public void ManageAll(object sender, EventArgs e) {
-            ManageForage();
-            ManageOre();
-            ManageLargeDebris();
+            ManageAll();
+        }
+
+        public void InitalizeResources() {
+            if (customManager.Canon) return;
+            if (customManager.LoadedFarm.Foraging != null) customManager.LoadedFarm.Foraging.Initalize();
+            if (customManager.LoadedFarm.Ores != null) customManager.LoadedFarm.Ores.Initalize();
+            if (customManager.LoadedFarm.ResourceClumps != null) customManager.LoadedFarm.ResourceClumps.Initalize();
+        }
+
+        public void InitalizeResources(object sender, EventArgs e) {
+            InitalizeResources();
         }
 
         public void ManageForage() {

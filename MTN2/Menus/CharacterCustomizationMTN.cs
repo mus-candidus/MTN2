@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Netcode;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Minigames;
@@ -18,7 +19,8 @@ namespace MTN2.Menus {
     /// </summary>
     public class CharacterCustomizationMTN : IClickableMenu {
         //MTN Stuff//
-        private readonly CustomManager customManager;
+        private readonly ICustomManager customManager;
+        private readonly IMonitor monitor;
         protected List<ClickableTextureComponent> allFarmButtons = new List<ClickableTextureComponent>();
 
         public ClickableTextureComponent noDebrisButton;
@@ -133,8 +135,9 @@ namespace MTN2.Menus {
         private ColorPicker lastHeldColorPicker;
         private int timesRandom;
 
-        public CharacterCustomizationMTN(CustomManager customManager, CharacterCustomization.Source source) : base(Game1.viewport.Width / 2 - (632 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2 - 64, 632 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2 + 64, false) {
+        public CharacterCustomizationMTN(ICustomManager customManager, IMonitor monitor, CharacterCustomization.Source source) : base(Game1.viewport.Width / 2 - (632 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2 - 64, 632 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2 + 64, false) {
             this.customManager = customManager;
+            this.monitor = monitor;
 
             this.shirtOptions = new List<int>
             {
@@ -353,7 +356,7 @@ namespace MTN2.Menus {
                     allFarmButtons.Add(farmButton);
                 }
                 foreach (CustomFarm customFarm in customManager.FarmList) {
-                    allFarmButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(baseFarmButton.X, baseFarmButton.Y + 440, 88, 80), null, customFarm.Description, customFarm.IconSource, new Rectangle(0, 0, 22, 20), 4f, false));
+                    allFarmButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(baseFarmButton.X, baseFarmButton.Y + 440, 88, 80), null, customFarm.DescriptionName + "_" + customFarm.DescriptionDetails, customFarm.IconSource, new Rectangle(0, 0, 22, 20), 4f, false));
                 }
 
                 //Set up scroll bar / arrow buttons
@@ -836,12 +839,16 @@ namespace MTN2.Menus {
         //Needs Fixing//
         ////////////////
         private void selectionClick(string name, int change) {
+            if (name == null) {
+                monitor.Log($"name is null in selectionClick. Discarding click request. If the issue persist, inform SgtPickles in SDV community discord.", LogLevel.Warn);
+                return;
+            }
             switch (name) {
                 case "Cabins":
-                    if ((Game1.startingCabins != 0 || change >= 0) && (Game1.startingCabins != customManager.SelectedFarm.CabinCapacity || change <= 0))
+                    if ((Game1.startingCabins != 0 || change >= 0) && (Game1.startingCabins != customManager.CabinLimit || change <= 0))
                         Game1.playSound("axchop");
                     Game1.startingCabins += change;
-                    Game1.startingCabins = Math.Max(0, Math.Min(customManager.SelectedFarm.CabinCapacity, Game1.startingCabins));
+                    Game1.startingCabins = Math.Max(0, Math.Min(customManager.CabinLimit, Game1.startingCabins));
                     break;
                 case "Hair":
                     Game1.player.changeHairStyle((int)((NetFieldBase<int, NetInt>)Game1.player.hair) + change);
