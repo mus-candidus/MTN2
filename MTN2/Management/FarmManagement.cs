@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile;
 
-namespace MTN2 {
+namespace MTN2.Management {
     internal class FarmManagement {
         //////////////
         //////////////
@@ -42,9 +42,7 @@ namespace MTN2 {
             }
         }
 
-        /// <summary>
-        /// Gets the custom farm that is currently loaded/being played.
-        /// </summary>
+        /// <summary>Gets the custom farm that is currently loaded/being played.</summary>
         public CustomFarm LoadedFarm {
             get {
                 if (LoadedIndex == -1) return null;
@@ -57,39 +55,27 @@ namespace MTN2 {
         /// Gets the coordinates where the player can interact with the 
         /// starting shipping bin.
         /// </summary>
-        public Interaction ShippingBinPoints {
+        public Interaction ShippingBin {
             get {
                 return LoadedFarm.ShippingBin.PointOfInteraction;
             }
         }
 
+        /// <summary></summary>
         public Interaction RabbitShrine {
             get {
                 return LoadedFarm.RabbitShrine.PointOfInteraction;
             }
         }
 
+        /// <summary></summary>
         public Interaction PetWaterBowl {
             get {
                 return LoadedFarm.PetWaterBowl.PointOfInteraction;
             }
         }
 
-        public Point FarmHousePorch {
-            get {
-                return new Point(LoadedFarm.FarmHouse.PointOfInteraction.X, LoadedFarm.FarmHouse.PointOfInteraction.Y);
-            }
-        }
-
-        public Point GreenHouseDoor {
-            get {
-                return new Point(LoadedFarm.GreenHouse.PointOfInteraction.X, LoadedFarm.GreenHouse.PointOfInteraction.Y);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <summary></summary>
         public Point FarmCaveOpening {
             get {
                 return new Point(LoadedFarm.FarmCave.PointOfInteraction.X, LoadedFarm.FarmCave.PointOfInteraction.Y);
@@ -101,8 +87,7 @@ namespace MTN2 {
         /// Constructors ///
         ////////////////////
         ////////////////////
-
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -296,12 +281,24 @@ namespace MTN2 {
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Clean() {
             FarmList = new List<CustomFarm>();
+            Reset();
+        }
+
+        public void Reset() {
             LoadedIndex = -1;
             SelectedIndex = -1;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="map"></param>
+        /// <returns></returns>
         public string GetAssetKey(out Map map) {
             if (!(LoadedFarm.FarmMap.FileType == FileType.xnb)) {
                 map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
@@ -311,6 +308,11 @@ namespace MTN2 {
             return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((!(LoadedFarm.FarmMap.FileType == FileType.xnb)) ? ".tbin" : ".xnb"));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
         public int CabinLimit(bool Canon) {
             return (Canon) ? 3 : FarmList[SelectedIndex].CabinCapacity;
         }
@@ -326,6 +328,36 @@ namespace MTN2 {
             }
             Interaction POI = LoadedFarm.GrandpaShrine.PointOfInteraction;
             return new Vector2(POI.X * 64f, POI.Y * 64f);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xOffset"></param>
+        /// <param name="yOffset"></param>
+        /// <param name="Option"></param>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public Vector2 MailboxNotification(float xOffset, float yOffset, bool Option, bool Canon) {
+            if (Canon || LoadedFarm.MailBox == null) {
+                return new Vector2((Option) ? 4388f : 4352f, ((Option) ? 928f : 880f) + yOffset);
+            }
+            Interaction POI = LoadedFarm.MailBox.PointOfInteraction;
+            return new Vector2((POI.X * 64f) + xOffset, (POI.Y * 64f) + yOffset);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Option"></param>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public float MailBoxNotifyLayerDepth(bool Option, bool Canon) {
+            if (Canon) {
+                return (Option) ? 0.11561f : 0.115601f;
+            } else {
+                return (((LoadedFarm.MailBox.PointOfInteraction.Y + 2) * 64f) / 10000f) + ((Option) ? 0.00041f : 0.000401f);
+            }
         }
     }
 }

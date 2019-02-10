@@ -1,26 +1,31 @@
-﻿using StardewModdingAPI;
+﻿using Microsoft.Xna.Framework;
+using MTN2.MapData;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xTile;
 
-namespace MTN2 {
+namespace MTN2.Management {
     internal class GHouseManagement {
+        protected int LoadedIndex = -1;
+
         private readonly FarmManagement farmManagement;
         public List<CustomGreenHouse> GreenHouseList { get; private set; }
 
-        public int GreenHouseEntryX {
+        /// <summary></summary>
+        private CustomGreenHouse SpecificGreenHouse {
             get {
-                if (Canon || LoadedFarm.CustomGreenhouse == null) return 10;
-                return LoadedFarm.CustomGreenhouse.Enterance.PointOfInteraction.X;
+                return farmManagement.LoadedFarm.CustomGreenhouse;
             }
         }
 
-        public int GreenHouseEntryY {
+        /// <summary></summary>
+        public Point GreenHouseDoor {
             get {
-                if (Canon || LoadedFarm.CustomGreenhouse == null) return 23;
-                return LoadedFarm.CustomGreenhouse.Enterance.PointOfInteraction.Y;
+                return new Point(farmManagement.LoadedFarm.GreenHouse.PointOfInteraction.X, farmManagement.LoadedFarm.GreenHouse.PointOfInteraction.Y);
             }
         }
 
@@ -85,24 +90,60 @@ namespace MTN2 {
         /// 
         /// </summary>
         /// <returns></returns>
-        public Vector2 GreenHouseCoords() {
-            if (Canon || LoadedFarm.GreenHouse == null) {
-                return GreenHouseCoordsCanon();
+        public Vector2 GreenHouseCoords(bool Canon) {
+            if (Canon || farmManagement.LoadedFarm.GreenHouse == null) {
+                return new Vector2(1600f, 384f);
             }
-            Placement? Coordinates = LoadedFarm.GreenHouse.Coordinates;
+            Placement? Coordinates = farmManagement.LoadedFarm.GreenHouse.Coordinates;
             return new Vector2(Coordinates.Value.X * 64f, Coordinates.Value.Y * 64f);
         }
 
-        protected Vector2 GreenHouseCoordsCanon() {
-            return new Vector2(1600f, 384f);
-        }
-
-        public float GreenHouseLayerDepth() {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public float GreenHouseLayerDepth(bool Canon) {
             if (Canon) {
                 return 0.0704f;
             } else {
-                return ((LoadedFarm.GreenHouse.PointOfInteraction.Y - 7 + 2) * 64f) / 10000f;
+                return ((farmManagement.LoadedFarm.GreenHouse.PointOfInteraction.Y - 7 + 2) * 64f) / 10000f;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public string GetAssetKey(out Map map) {
+            //if (LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw || LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.tbin) {
+            if (!(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.xnb)) { 
+                map = farmManagement.LoadedFarm.CustomGreenhouse.ContentPack.LoadAsset<Map>(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ".tbin");
+            } else {
+                map = null;
+            }
+            return farmManagement.LoadedFarm.CustomGreenhouse.ContentPack.GetActualAssetKey(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ((farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType != FileType.xnb) ? ".tbin" : ".xnb"));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public int GreenHouseEntryX(bool Canon) {
+            if (Canon || SpecificGreenHouse == null) return 10;
+            return SpecificGreenHouse.Enterance.PointOfInteraction.X;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public int GreenHouseEntryY(bool Canon) {
+            if (Canon || SpecificGreenHouse == null) return 23;
+            return SpecificGreenHouse.Enterance.PointOfInteraction.Y;
         }
     }
 }

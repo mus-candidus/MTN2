@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MTN2.Compatibility;
+using MTN2.Management;
 using MTN2.MapData;
 using StardewModdingAPI;
 using StardewValley.Locations;
@@ -21,13 +22,29 @@ namespace MTN2
     /// of custom classes and manipulates / gathers the data accordingly.
     /// </summary>
     internal class CustomManager : ICustomManager {
-        public FarmManagement FarmManager { get; private set; }
-        public GHouseManagement GreenhouseManager { get; private set; }
-        public FHouseManagement HouseManager { get; private set; }
+        public IContentPack LoadedPack { get; private set; }
+        private FarmManagement FarmManager { get; set; }
+        private GHouseManagement GreenhouseManager { get; set; }
+        private FHouseManagement HouseManager { get; set; }
         
         public bool NoDebris { get; set; } = false;
         public bool Canon { get; private set; } = true;
         public int ScienceHouseIndex { get; private set; }
+
+        public int CabinLimit { get { return FarmManager.CabinLimit(Canon); } }
+        public List<CustomFarm> FarmList { get { return FarmManager.FarmList; } }
+        public List<CustomGreenHouse> GreenHouseList { get { return GreenhouseManager.GreenHouseList; } }
+        public CustomFarm SelectedFarm { get { return FarmManager.SelectedFarm; } }
+        public CustomFarm LoadedFarm { get { return FarmManager.LoadedFarm; } }
+        public Interaction ShippingBin { get { return FarmManager.ShippingBin; } }
+        public Interaction RabbitShrine { get { return FarmManager.RabbitShrine; } }
+        public Interaction PetWaterBowl { get { return FarmManager.PetWaterBowl; } }
+        public Point FarmHousePorch { get { return HouseManager.FrontPorch; } }
+        public Point GreenHouseDoor { get { return GreenhouseManager.GreenHouseDoor; } }
+        public Point FarmCaveOpening { get { return FarmManager.FarmCaveOpening; } }
+        public int FurnitureLayout { get { return HouseManager.FurnitureLayout; } }
+        public int GreenHouseEntryX { get { return GreenhouseManager.GreenHouseEntryX(Canon); } }
+        public int GreenHouseEntryY { get { return GreenhouseManager.GreenHouseEntryY(Canon); } }
 
         /// <summary>
         /// Constructor.
@@ -89,13 +106,14 @@ namespace MTN2
         /// <param name="map">The base farm map, loaded.</param>
         /// <returns>The Actual Asset Key</returns>
         public string GetAssetKey(out Map map, string type) {
-            if (type == "Greenhouse") {
-                if (LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw || LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.tbin) {
-                    map = LoadedFarm.CustomGreenhouse.ContentPack.LoadAsset<Map>(LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ".tbin");
-                } else {
+            switch(type) {
+                case "Farm":
+                    return FarmManager.GetAssetKey(out map);
+                case "Greenhouse":
+                    return GreenhouseManager.GetAssetKey(out map);
+                default:
                     map = null;
-                }
-                return LoadedFarm.CustomGreenhouse.ContentPack.GetActualAssetKey(LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ((LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw) ? ".tbin" : ".xnb"));
+                    return null;
             }
         }
 
@@ -128,50 +146,56 @@ namespace MTN2
         /// <param name="OffsetY">The Offset value for the Y Coordinate</param>
         /// <returns>The coordinates in Vector2 form.</returns>
         public Vector2 FarmHouseCoords(float OffsetX = 0, float OffsetY = 0) {
-            if (Canon || LoadedFarm.FarmHouse == null) {
-                return FarmHouseCoordsCanon(OffsetX, OffsetY);
-            }
-            Placement? Coordinates = LoadedFarm.FarmHouse.Coordinates;
-            return new Vector2((Coordinates.Value.X * 64f) + OffsetX, (Coordinates.Value.Y * 64f) + OffsetY);
+            return HouseManager.FarmHouseCoords(OffsetX, OffsetY, Canon);
         }
 
         /// <summary>
-        /// Gets the original (Canon) farmhouse coordinate values in Vector2 form. Allows
-        /// offsetting the coordinates
+        /// 
         /// </summary>
-        /// <param name="OffsetX">The Offset value for the X Coordinate</param>
-        /// <param name="OffsetY">The Offset value for the Y Coordinate</param>
-        /// <returns>The canon coordinates in Vector2 form.</returns>
-        protected Vector2 FarmHouseCoordsCanon(float OffsetX, float OffsetY) {
-            return new Vector2(3712f + OffsetX, 520f + OffsetY);
-        }
-
-
-
+        /// <param name="xOffset"></param>
+        /// <param name="yOffset"></param>
+        /// <param name="Option"></param>
+        /// <returns></returns>
         public Vector2 MailboxNotification(float xOffset, float yOffset, bool Option) {
-            if (Canon || LoadedFarm.MailBox == null) {
-                return new Vector2((Option) ? 4388f : 4352f, ((Option) ? 928f : 880f) + yOffset);
-            }
-            Interaction POI = LoadedFarm.MailBox.PointOfInteraction;
-            return new Vector2((POI.X * 64f) + xOffset, (POI.Y * 64f) + yOffset);
+            return FarmManager.MailboxNotification(xOffset, yOffset, Option, Canon);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Option"></param>
+        /// <returns></returns>
         public float MailBoxNotifyLayerDepth(bool Option) {
-            if (Canon) {
-                return (Option) ? 0.11561f : 0.115601f;
-            } else {
-                return (((LoadedFarm.MailBox.PointOfInteraction.Y + 2) * 64f) / 10000f) + ((Option) ? 0.00041f : 0.000401f);
-            }
+            return FarmManager.MailBoxNotifyLayerDepth(Option, Canon);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public void SetScienceIndex(int index) {
             ScienceHouseIndex = index;
         }
 
         public void Reset() {
-            SelectedIndex = 0;
-            LoadedIndex = -1;
             Canon = true;
+            FarmManager.Reset();
+        }
+
+        public float FarmHouseLayerDepth() {
+            return HouseManager.FarmHouseLayerDepth(Canon);
+        }
+
+        public Vector2 GreenHouseCoords() {
+            return GreenhouseManager.GreenHouseCoords(Canon);
+        }
+
+        public float GreenHouseLayerDepth() {
+            return GreenhouseManager.GreenHouseLayerDepth(Canon);
+        }
+
+        public Vector2 GrandpaShrineCoords() {
+            return FarmManager.GrandpaShrineCoords(Canon);
         }
     }
 }

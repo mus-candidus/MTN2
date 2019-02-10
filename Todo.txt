@@ -13,9 +13,9 @@ Once all of this is done, MTN2 will be out of Alpha and in Beta.
 - [ ] Implement user ability to turn stand-alone off/on.
 [ ] Implement Map overrides
 [ ] Implement "Inject" Method for custom maps [Place between two canon maps]
-[ ] Implement Spawn Rules: Ores
-[ ] Implement Spawn Rules: Resource
-[ ] Implement Spawn Rules: Foraging
+[-] Implement Spawn Rules: Ores
+[-] Implement Spawn Rules: Resource
+[-] Implement Spawn Rules: Foraging
 [ ] Implement Spawn Rules: Fishing
 [ ] Implement Custom Logic (DLL support)
 [ ] Implement Multi-Farm Maps

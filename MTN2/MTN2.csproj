@@ -74,9 +74,9 @@
     <Compile Include="CustomFarm.cs" />
     <Compile Include="CustomManager.cs" />
     <Compile Include="CustomGreenHouse.cs" />
-    <Compile Include="FarmManagement.cs" />
-    <Compile Include="FHouseManagement.cs" />
-    <Compile Include="GHouseManagement.cs" />
+    <Compile Include="Management\FarmManagement.cs" />
+    <Compile Include="Management\FHouseManagement.cs" />
+    <Compile Include="Management\GHouseManagement.cs" />
     <Compile Include="ICustomManager.cs" />
     <Compile Include="Locations\AdvancedScienceHouse.cs" />
     <Compile Include="Locations\ModHouse.cs" />
