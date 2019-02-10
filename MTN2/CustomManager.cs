@@ -21,259 +21,40 @@ namespace MTN2
     /// of custom classes and manipulates / gathers the data accordingly.
     /// </summary>
     internal class CustomManager : ICustomManager {
-        protected int LoadedIndex = -1;
-        protected int SelectedIndex = -1;
-        public List<CustomFarm> FarmList { get; private set; }
-        public List<CustomGreenHouse> GreenHouseList { get; private set; }
+        public FarmManagement FarmManager { get; private set; }
+        public GHouseManagement GreenhouseManager { get; private set; }
+        public FHouseManagement HouseManager { get; private set; }
+        
         public bool NoDebris { get; set; } = false;
         public bool Canon { get; private set; } = true;
         public int ScienceHouseIndex { get; private set; }
 
-        public int CabinLimit {
-            get {
-                if (Canon) return 3;
-                return FarmList[SelectedIndex].CabinCapacity;
-            }
-        }
 
-        /// <summary>
-        /// Gets the custom farm that the player current has selected
-        /// for a new game. Used primarily when the player is creating
-        /// said new game.
-        /// </summary>
-        public CustomFarm SelectedFarm {
-            get {
-                if (Canon) return null;
-                return FarmList[SelectedIndex];
-            }
-        }
-        /// <summary>
-        /// Gets the custom farm that is currently loaded/being played.
-        /// </summary>
-        public CustomFarm LoadedFarm {
-            get {
-                if (LoadedIndex == -1) return null;
-                if (FarmList.Count == 0) return null;
-                return FarmList[LoadedIndex];
-            }
-        }
-        /// <summary>
-        /// Gets the coordinates where the player can interact with the 
-        /// starting shipping bin.
-        /// </summary>
-        public Interaction ShippingBinPoints {
-            get {
-                return LoadedFarm.ShippingBin.PointOfInteraction;
-            }
-        }
-
-        public Interaction RabbitShrine {
-            get {
-                return LoadedFarm.RabbitShrine.PointOfInteraction;
-            }
-        }
-
-        public Interaction PetWaterBowl {
-            get {
-                return LoadedFarm.PetWaterBowl.PointOfInteraction;
-            }
-        }
-
-        public Point FarmHousePorch {
-            get {
-                return new Point(LoadedFarm.FarmHouse.PointOfInteraction.X, LoadedFarm.FarmHouse.PointOfInteraction.Y);
-            }
-        }
-
-        public Point GreenHouseDoor {
-            get {
-                return new Point(LoadedFarm.GreenHouse.PointOfInteraction.X, LoadedFarm.GreenHouse.PointOfInteraction.Y);
-            }
-        }
-
-        public Point FarmCaveOpening {
-            get {
-                return new Point(LoadedFarm.FarmCave.PointOfInteraction.X, LoadedFarm.FarmCave.PointOfInteraction.Y);
-            }
-        }
-
-        public int FurnitureLayout {
-            get {
-                return LoadedFarm.FurnitureLayoutFromCanon;
-            }
-        }
-
-        public int GreenHouseEntryX {
-            get {
-                if (Canon || LoadedFarm.CustomGreenhouse == null) return 10;
-                return LoadedFarm.CustomGreenhouse.Enterance.PointOfInteraction.X;
-            }
-        }
-
-        public int GreenHouseEntryY {
-            get {
-                if (Canon || LoadedFarm.CustomGreenhouse == null) return 23;
-                return LoadedFarm.CustomGreenhouse.Enterance.PointOfInteraction.Y;
-            }
-        }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public CustomManager() {
-            FarmList = new List<CustomFarm>();
+            FarmManager = new FarmManagement();
+            GreenhouseManager = new GHouseManagement(FarmManager);
+            HouseManager = new FHouseManagement(FarmManager);
         }
 
         /// <summary>
         /// Populates the List<CustomFarm> FarmList variable with all the Content Packs
         /// registered to MTN.
         /// </summary>
-        /// <param name="Helper">SMAPI's IModHelper, to load in the Content Packs</param>
-        /// <param name="Monitor">SMAPI's IMonitor, to print useful information</param>
-        public void Populate(IModHelper Helper, IMonitor Monitor) {
-            CustomFarm FarmData;
-            CustomGreenHouse GreenHouseData;
-            bool ContainsFarm = false;
-            bool ContainsGreenHouse = false;
-            FarmList = new List<CustomFarm>();
+        /// <param name="helper">SMAPI's IModHelper, to load in the Content Packs</param>
+        /// <param name="monitor">SMAPI's IMonitor, to print useful information</param>
+        public void Populate(IModHelper helper, IMonitor monitor) {
 
-            foreach (IContentPack ContentPack in Helper.ContentPacks.GetOwned()) {
-                FarmData = new CustomFarm();
-                GreenHouseData = new CustomGreenHouse();
-                Monitor.Log($"Reading content pack: {ContentPack.Manifest.Name} {ContentPack.Manifest.Version}.");
-
-                ContainsFarm = ProcessFarmType(ContentPack, out FarmData);
-                ContainsGreenHouse = ProcessGreenHouseType(ContentPack, out GreenHouseData);
-
-                if (FarmData.Version < 2.1) {
-                    FarmData = PopulateOld(ContentPack, Monitor, FarmData.Version);
-                }
-
-                if (ContainsFarm) {
-                    Monitor.Log($"\t + Contains a custom farm.", LogLevel.Trace);
-                    LoadIcon(Helper, ContentPack, FarmData);
-                    Validate(FarmData);
-                }
-
-                if (FarmData != null) {
-                    FarmData.ContentPack = ContentPack;
-                    FarmList.Add(FarmData);
-                }
-                if (GreenHouseData != null) {
-                    GreenHouseData.ContentPack = ContentPack;
-                    GreenHouseList.Add(GreenHouseData);
-                }
+            foreach (IContentPack contentPack in helper.ContentPacks.GetOwned()) {
+                monitor.Log($"Reading content pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version}.");
+                FarmManager.Populate(helper, contentPack, monitor);
+                GreenhouseManager.Populate(contentPack, monitor);
             }
 
             return;
-        }
-
-        private void LoadIcon(IModHelper helper, IContentPack contentPack, CustomFarm farm) {
-            string IconFile;
-            IconFile = Path.Combine(contentPack.DirectoryPath, "icon.png");
-            if (File.Exists(IconFile)) {
-                farm.IconSource = contentPack.LoadAsset<Texture2D>("icon.png");
-            } else {
-                farm.IconSource = helper.Content.Load<Texture2D>(Path.Combine("res", "missingIcon.png"));
-            }
-        }
-
-        private bool ProcessGreenHouseType(IContentPack contentPack, out CustomGreenHouse greenHouse) {
-            Dictionary<string, object> Extra;
-            if (contentPack.Manifest.ExtraFields != null && contentPack.Manifest.ExtraFields.ContainsKey("ContentPackType")) {
-                Extra = (Dictionary<string, object>)ObjectToDictionaryHelper.ToDictionary(contentPack.Manifest.ExtraFields["ContentPackType"]);
-                if (Extra.ContainsKey("Greenhouse") && bool.Parse(Extra["Greenhouse"].ToString())) {
-                    greenHouse = contentPack.ReadJsonFile<CustomGreenHouse>("greenHouseType.json");
-                    return true;
-                }
-            }
-            greenHouse = null;
-            return false;
-        }
-
-        private bool ProcessFarmType(IContentPack contentPack, out CustomFarm farm) {
-            Dictionary<string, object> Extra;
-            bool results;
-
-            if (contentPack.Manifest.ExtraFields != null && contentPack.Manifest.ExtraFields.ContainsKey("ContentPackType")) {
-                Extra = (Dictionary<string, object>) ObjectToDictionaryHelper.ToDictionary(contentPack.Manifest.ExtraFields["ContentPackType"]);
-                if (Extra.ContainsKey("Farm") && bool.Parse(Extra["Farm"].ToString())) {
-                    farm = contentPack.ReadJsonFile<CustomFarm>("farmType.json");
-                    results = true;
-                } else {
-                    farm = null;
-                    results = false;
-                }
-            } else {
-                farm = contentPack.ReadJsonFile<CustomFarm>("farmType.json");
-                results = true;
-            }
-            return results;
-        }
-
-        /// <summary>
-        /// Converts a content pack with an older farmType.json to the latest.
-        /// </summary>
-        /// <param name="contentPack">A SMAPI Content Pack</param>
-        /// <param name="monitor">SMAPI's IMonitor, to print useful information.</param>
-        /// <returns>Converted CustomFarm</returns>
-        private CustomFarm PopulateOld(IContentPack contentPack, IMonitor monitor, float Version) {
-            switch(Version) {
-                case 2.0f:
-                    return PopulateOldVer20(contentPack, monitor);
-                default:
-                    return PopulateOldVer1(contentPack, monitor);
-            }
-        }
-
-        /// <summary>
-        /// Converts a content pack with a farmType.json 1.0 (MTN1) to the latest.
-        /// </summary>
-        /// <param name="contentPack">A SMAPI Content Pack</param>
-        /// <param name="monitor">SMAPI's IMonitor, to print useful information.</param>
-        /// <returns>Converted CustomFarm</returns>
-        private CustomFarm PopulateOldVer1(IContentPack contentPack, IMonitor monitor) {
-            CustomFarmVer1 oldVersion;
-            CustomFarm convertedFarm;
-
-            monitor.Log("\t - Content Pack is for FarmType 1.0 (MTN1). Using Backwards Compatibility.");
-            oldVersion = contentPack.ReadJsonFile<CustomFarmVer1>("farmType.json");
-            convertedFarm = new CustomFarm();
-            CustomFarmVer1.Convert(convertedFarm, oldVersion);
-            return convertedFarm;
-        }
-
-        /// <summary>
-        /// Converts a content pack with a farmType.json 2.0 to the latest.
-        /// </summary>
-        /// <param name="contentPack">A SMAPI Content Pack</param>
-        /// <param name="monitor">SMAPI's IMonitor, to print useful information.</param>
-        /// <returns>Converted CustomFarm</returns>
-        private CustomFarm PopulateOldVer20(IContentPack contentPack, IMonitor monitor) {
-            CustomFarmVer2p0 oldVersion;
-            CustomFarm convertedFarm;
-
-            monitor.Log("\t - Content Pack is using FarmType 2.0. Using Backwards Compatibility.");
-            oldVersion = contentPack.ReadJsonFile<CustomFarmVer2p0>("farmType.json");
-            convertedFarm = new CustomFarm();
-            CustomFarmVer2p0.Convert(convertedFarm, oldVersion);
-            return convertedFarm;
-        }
-
-        /// <summary>
-        /// Checks each field containing a <see cref="Structure"/> type. Implements the default (canon) values if
-        /// the field is omitted.
-        /// </summary>
-        /// <param name="farm"></param>
-        private void Validate(CustomFarm farm) {
-            farm.FarmHouse = (farm.FarmHouse == null) ? new Structure(new Placement(3712f / 64f, 520f / 64f), new Interaction(64, 15)) : farm.FarmHouse;
-            farm.GreenHouse = (farm.GreenHouse == null) ? new Structure(new Placement(1600f / 64f, 384f / 64f), new Interaction(28, 17)) : farm.GreenHouse;
-            farm.FarmCave = (farm.FarmCave == null) ? new Structure(new Placement(), new Interaction(34, 7)) : farm.FarmCave;
-            farm.ShippingBin = (farm.ShippingBin == null) ? new Structure(new Placement(), new Interaction(71, 13)) : farm.ShippingBin;
-            farm.MailBox = (farm.MailBox == null) ? new Structure(new Placement(), new Interaction(68, 16)) : farm.MailBox;
-            farm.GrandpaShrine = (farm.GrandpaShrine == null) ? new Structure(new Placement(), new Interaction(9, 7)) : farm.GrandpaShrine;
-            farm.RabbitShrine = (farm.RabbitShrine == null) ? new Structure(new Placement(), new Interaction(48, 7)) : farm.RabbitShrine;
-            farm.PetWaterBowl = (farm.PetWaterBowl == null) ? new Structure(new Placement(), new Interaction(54, 7)) : farm.PetWaterBowl;
         }
 
         /// <summary>
@@ -281,20 +62,7 @@ namespace MTN2
         /// </summary>
         /// <param name="farmName"></param>
         public void UpdateSelectedFarm(string farmName) {
-            if (!farmName.StartsWith("MTN_")) {
-                Canon = true;
-                SelectedIndex = -1;
-                return;
-            }
-            Canon = false;
-            farmName = farmName.Substring(4);
-            for (int i = 0; i < FarmList.Count; i++) {
-                if (FarmList[i].Name == farmName) {
-                    SelectedIndex = i;
-                    return;
-                }
-            }
-            SelectedIndex = -1;
+            Canon = FarmManager.Update(farmName);
             return;
         }
 
@@ -303,16 +71,8 @@ namespace MTN2
         /// as a confirmation.
         /// </summary>
         public void LoadCustomFarm() {
-            if (SelectedIndex == -1) {
-                LoadedIndex = -1;
-                Canon = true;
-                return;
-            } else {
-                LoadedIndex = SelectedIndex;
-                Canon = false;
-                LinkGreenHouse();
-                return;
-            }
+            Canon = FarmManager.Load();
+            if (!Canon) GreenhouseManager.LinkToFarm(FarmManager.LoadedFarm);
         }
 
         /// <summary>
@@ -320,30 +80,8 @@ namespace MTN2
         /// </summary>
         /// <param name="whichFarm"></param>
         public void LoadCustomFarm(int whichFarm) {
-            if (whichFarm < 5) {
-                Canon = true;
-                return;
-            } else {
-                for (int i = 0; i < FarmList.Count; i++) {
-                    if (FarmList[i].ID == whichFarm) {
-                        LoadedIndex = i;
-                        break;
-                    }
-                }
-                Canon = false;
-                LinkGreenHouse();
-                return;
-            }
-        }
-
-        private void LinkGreenHouse() {
-            if (LoadedFarm.StartingGreenHouse != null) {
-                for (int i = 0; i < GreenHouseList.Count; i++) {
-                    if (GreenHouseList[i].Name == LoadedFarm.StartingGreenHouse) {
-                        LoadedFarm.CustomGreenhouse = GreenHouseList[i];
-                    }
-                }
-            }
+            Canon = FarmManager.Load(whichFarm);
+            if (!Canon) GreenhouseManager.LinkToFarm(FarmManager.LoadedFarm);
         }
         
         /// <summary>
@@ -354,19 +92,19 @@ namespace MTN2
         /// <returns>The Actual Asset Key</returns>
         public string GetAssetKey(out Map map, string type) {
             if (type == "Greenhouse") {
-                if (LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw) {
+                if (LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw || LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.tbin) {
                     map = LoadedFarm.CustomGreenhouse.ContentPack.LoadAsset<Map>(LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ".tbin");
                 } else {
                     map = null;
                 }
                 return LoadedFarm.CustomGreenhouse.ContentPack.GetActualAssetKey(LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ((LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw) ? ".tbin" : ".xnb"));
             } else { 
-                if (LoadedFarm.FarmMap.FileType == FileType.raw) {
+                if (LoadedFarm.FarmMap.FileType == FileType.raw || LoadedFarm.FarmMap.FileType == FileType.tbin) {
                     map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
                 } else {
                     map = null;
                 }
-                return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((LoadedFarm.FarmMap.FileType == FileType.raw) ? ".tbin" : ".xnb"));
+                return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((LoadedFarm.FarmMap.FileType == FileType.raw || LoadedFarm.FarmMap.FileType == FileType.tbin) ? ".tbin" : ".xnb"));
             } 
         }
 

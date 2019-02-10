@@ -70,9 +70,6 @@ namespace MTN2.Patches.Game1Patches {
                 }
             }
 
-            //Loaded Farm Maps
-            //Memory.farmMaps.Add(new additionalMap<Farm>("BaseFarm", "Farm", (Game1.whichFarm > 4) ? Memory.loadedFarm.farmMapType : fileType.xnb, "Farm", "Base Farm", Game1.getFarm()));
-
             if (!customManager.Canon && customManager.LoadedFarm.AdditionalMaps != null) {
                 foreach (MapFile mf in customManager.LoadedFarm.AdditionalMaps) {
                     object newMap;
