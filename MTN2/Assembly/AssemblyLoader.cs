@@ -35,7 +35,7 @@ namespace MTN2 {
             MtnLogic newLogic = (MtnLogic)dll.CreateInstance(entries[0].ToString());
 
             if (newLogic == null) {
-                //Error. class shouldn't be instantiated.
+                //Error. class couldn't be instantiated.
             }
 
             return newLogic;

@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile;
 
-namespace MTN2
+namespace MTN2.Management
 {
     /// <summary>
     /// CustomManager class. Performs all the nessecary operations needed to allow a custom maps (custom farms, greenhouse, etc)

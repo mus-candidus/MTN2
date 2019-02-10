@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTN2
+namespace MTN2.Patches
 {
     public class PatchConfig
     {

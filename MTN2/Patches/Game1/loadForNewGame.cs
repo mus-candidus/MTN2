@@ -59,6 +59,7 @@ namespace MTN2.Patches.Game1Patches {
 
                 mapAssetKey = customManager.GetAssetKey(out map, "Farm");
                 Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
+                if (customManager.LoadedFarm.FarmMap.FileType != FileType.xnb) Game1.locations[farmIndex].updateMap();
 
                 if (customManager.LoadedFarm.StartingGreenHouse != null) {
                     for (greenhouseIndex = 0; greenhouseIndex < Game1.locations.Count; greenhouseIndex++) {

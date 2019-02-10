@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MTN2.Compatibility;
 using MTN2.MapData;
+using MTN2.Utilities;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -160,7 +161,7 @@ namespace MTN2.Management {
             if (File.Exists(IconFile)) {
                 farm.IconSource = contentPack.LoadAsset<Texture2D>("icon.png");
             } else {
-                farm.IconSource = helper.Content.Load<Texture2D>(Path.Combine("res", "missingIcon.png"));
+                farm.IconSource = helper.Content.Load<Texture2D>(Path.Combine("Resource", "missingIcon.png"));
             }
         }
 

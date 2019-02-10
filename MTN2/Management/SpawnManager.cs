@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTN2 {
-    public class SpawnManager {
+namespace MTN2.Management {
+    internal class SpawnManager {
         private readonly ICustomManager customManager;
         private int Attempts = 10;
 

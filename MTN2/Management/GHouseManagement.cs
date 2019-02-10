@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MTN2.MapData;
+using MTN2.Utilities;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -118,12 +119,12 @@ namespace MTN2.Management {
         /// <returns></returns>
         public string GetAssetKey(out Map map) {
             //if (LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw || LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.tbin) {
-            if (!(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.xnb)) { 
-                map = farmManagement.LoadedFarm.CustomGreenhouse.ContentPack.LoadAsset<Map>(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ".tbin");
+            if (!(SpecificGreenHouse.GreenhouseMap.FileType == FileType.xnb)) { 
+                map = SpecificGreenHouse.ContentPack.LoadAsset<Map>(SpecificGreenHouse.GreenhouseMap.FileName + ".tbin");
             } else {
                 map = null;
             }
-            return farmManagement.LoadedFarm.CustomGreenhouse.ContentPack.GetActualAssetKey(farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ((farmManagement.LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType != FileType.xnb) ? ".tbin" : ".xnb"));
+            return SpecificGreenHouse.ContentPack.GetActualAssetKey(SpecificGreenHouse.GreenhouseMap.FileName + ((SpecificGreenHouse.GreenhouseMap.FileType != FileType.xnb) ? ".tbin" : ".xnb"));
         }
 
         /// <summary>

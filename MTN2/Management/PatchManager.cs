@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using MTN2.Patches;
 using MTN2.Patches.EventPatches;
 using MTN2.Patches.FarmHousePatches;
 using MTN2.Patches.FarmPatches;
@@ -15,13 +16,9 @@ using MTN2.Patches.WorldChangeEventPatches;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Patch = MTN2.Patches.Patch;
 
-namespace MTN2
+namespace MTN2.Management
 {
     internal class PatchManager
     {
