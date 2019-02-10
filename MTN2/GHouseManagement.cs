@@ -80,5 +80,29 @@ namespace MTN2 {
             greenHouse = null;
             return false;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GreenHouseCoords() {
+            if (Canon || LoadedFarm.GreenHouse == null) {
+                return GreenHouseCoordsCanon();
+            }
+            Placement? Coordinates = LoadedFarm.GreenHouse.Coordinates;
+            return new Vector2(Coordinates.Value.X * 64f, Coordinates.Value.Y * 64f);
+        }
+
+        protected Vector2 GreenHouseCoordsCanon() {
+            return new Vector2(1600f, 384f);
+        }
+
+        public float GreenHouseLayerDepth() {
+            if (Canon) {
+                return 0.0704f;
+            } else {
+                return ((LoadedFarm.GreenHouse.PointOfInteraction.Y - 7 + 2) * 64f) / 10000f;
+            }
+        }
     }
 }

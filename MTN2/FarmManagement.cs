@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xTile;
 
 namespace MTN2 {
     internal class FarmManagement {
@@ -36,7 +37,7 @@ namespace MTN2 {
         /// </summary>
         public CustomFarm SelectedFarm {
             get {
-                if (Canon) return null;
+                if (SelectedIndex == -1) return null;
                 return FarmList[SelectedIndex];
             }
         }
@@ -301,12 +302,30 @@ namespace MTN2 {
             SelectedIndex = -1;
         }
 
-        public void GetAssetKey() {
-
+        public string GetAssetKey(out Map map) {
+            if (!(LoadedFarm.FarmMap.FileType == FileType.xnb)) {
+                map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
+            } else {
+                map = null;
+            }
+            return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((!(LoadedFarm.FarmMap.FileType == FileType.xnb)) ? ".tbin" : ".xnb"));
         }
 
         public int CabinLimit(bool Canon) {
             return (Canon) ? 3 : FarmList[SelectedIndex].CabinCapacity;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Canon"></param>
+        /// <returns></returns>
+        public Vector2 GrandpaShrineCoords(bool Canon) {
+            if (Canon || LoadedFarm.GrandpaShrine == null) {
+                return new Vector2(576f, 448f);
+            }
+            Interaction POI = LoadedFarm.GrandpaShrine.PointOfInteraction;
+            return new Vector2(POI.X * 64f, POI.Y * 64f);
         }
     }
 }

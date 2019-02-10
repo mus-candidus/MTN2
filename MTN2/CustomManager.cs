@@ -29,8 +29,6 @@ namespace MTN2
         public bool Canon { get; private set; } = true;
         public int ScienceHouseIndex { get; private set; }
 
-
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -98,14 +96,7 @@ namespace MTN2
                     map = null;
                 }
                 return LoadedFarm.CustomGreenhouse.ContentPack.GetActualAssetKey(LoadedFarm.CustomGreenhouse.GreenhouseMap.FileName + ((LoadedFarm.CustomGreenhouse.GreenhouseMap.FileType == FileType.raw) ? ".tbin" : ".xnb"));
-            } else { 
-                if (LoadedFarm.FarmMap.FileType == FileType.raw || LoadedFarm.FarmMap.FileType == FileType.tbin) {
-                    map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
-                } else {
-                    map = null;
-                }
-                return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((LoadedFarm.FarmMap.FileType == FileType.raw || LoadedFarm.FarmMap.FileType == FileType.tbin) ? ".tbin" : ".xnb"));
-            } 
+            }
         }
 
         /// <summary>
@@ -155,42 +146,7 @@ namespace MTN2
             return new Vector2(3712f + OffsetX, 520f + OffsetY);
         }
 
-        /// <summary>
-        /// Computes and returns the Layer Depth value needed to properly render the Farmhouse.
-        /// Returns the original (canon) Layer Depth if the farm is not a custom farm.
-        /// </summary>
-        /// <returns>The proper layer depth. Used in Spritebatch.Draw</returns>
-        public float FarmHouseLayerDepth() {
-            if (Canon || LoadedFarm.FarmHouse == null) {
-                return 0.075f;
-            } else {
-                return ((LoadedFarm.FarmHouse.PointOfInteraction.Y - 5 + 3) * 64) / 10000f;
-            }
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 GreenHouseCoords() {
-            if (Canon || LoadedFarm.GreenHouse == null) {
-                return GreenHouseCoordsCanon();
-            }
-            Placement? Coordinates = LoadedFarm.GreenHouse.Coordinates;
-            return new Vector2(Coordinates.Value.X * 64f, Coordinates.Value.Y * 64f);
-        }
-
-        protected Vector2 GreenHouseCoordsCanon() {
-            return new Vector2(1600f, 384f);
-        }
-
-        public float GreenHouseLayerDepth() {
-            if (Canon) {
-                return 0.0704f;
-            } else {
-                return ((LoadedFarm.GreenHouse.PointOfInteraction.Y - 7 + 2) * 64f) / 10000f;
-            }
-        }
 
         public Vector2 MailboxNotification(float xOffset, float yOffset, bool Option) {
             if (Canon || LoadedFarm.MailBox == null) {
@@ -208,14 +164,6 @@ namespace MTN2
             }
         }
 
-        public Vector2 GrandpaShrineCoords() {
-            if (Canon || LoadedFarm.GrandpaShrine == null) {
-                return new Vector2(576f, 448f);
-            }
-            Interaction POI = LoadedFarm.GrandpaShrine.PointOfInteraction;
-            return new Vector2(POI.X * 64f, POI.Y * 64f);
-        }
-
         public void SetScienceIndex(int index) {
             ScienceHouseIndex = index;
         }
@@ -224,10 +172,6 @@ namespace MTN2
             SelectedIndex = 0;
             LoadedIndex = -1;
             Canon = true;
-        }
-
-        public void IntegrityCheck() {
-
         }
     }
 }
