@@ -20,7 +20,7 @@ namespace MTN2
 {
     /// <summary>The mod entry point.</summary>
     public class MTN : Mod {
-        private HarmonyInstance Harmony;
+        private readonly HarmonyInstance Harmony;
         private PatchManager PatchManager;
         private SpawnManager SpawnManager;
         private Templates Template;
@@ -59,6 +59,8 @@ namespace MTN2
             Helper.Events.Multiplayer.PeerContextReceived += BeforeServerIntroduction;
             Helper.Events.Multiplayer.ModMessageReceived += MessageRecieved;
 
+            Helper.Events.Specialized.LoadStageChanged += TryToResolveFarmId;
+
             Helper.ConsoleCommands.Add("LocationEntry", "Lists (all) the location loaded in the game.\n" +
                                                         "Usage: LocationEntry <number>\n" +
                                                         "- number: An integer value.\n" +
@@ -72,6 +74,17 @@ namespace MTN2
                                                          "  + GreenHouse: Creates a greenHouseType.json Template",
                                                          CreateTemplate);
             return;
+        }
+
+        private void TryToResolveFarmId(object sender, LoadStageChangedEventArgs e) {
+            if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedBasicInfo) {
+                if (Game1.whichFarm >= 5 && Game1.hasApplied1_4_UpdateChanges == false) {
+
+                }
+                object save = SaveGame.loaded;
+                object game1 = Game1.whichFarm;
+                object fix = Game1.hasApplied1_4_UpdateChanges;
+            }
         }
 
         /// <summary>
@@ -100,9 +113,9 @@ namespace MTN2
         /// <param name="e"></param>
         private void NewGameMenu(object sender, EventArgs e) {
             if (Game1.activeClickableMenu is TitleMenu) {
-                if (TitleMenu.subMenu is CharacterCustomization) {
-                    CharacterCustomization oldMenu = (CharacterCustomization)TitleMenu.subMenu;
-                    CharacterCustomizationMTN menu = new CharacterCustomizationMTN(CustomManager, Monitor, oldMenu.source);
+                if (TitleMenu.subMenu is CharacterCustomization oldMenu) {
+                    Multiplayer multiplayer = (Multiplayer)Traverse.Create(typeof(Game1)).Field("multiplayer").GetValue();
+                    CharacterCustomizationMTN2 menu = new CharacterCustomizationMTN2(CustomManager, Monitor, multiplayer, oldMenu.source);
                     TitleMenu.subMenu = menu;
                 }
             }
@@ -171,6 +184,11 @@ namespace MTN2
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="args"></param>
         public void CreateTemplate(string command, string[] args) {
             if (args.Length < 1) {
                 Monitor.Log($"Invalid command.");
@@ -196,8 +214,9 @@ namespace MTN2
         /// <param name="e"></param>
         private void BeforeServerIntroduction(object sender, EventArgs e) {
             if (Game1.multiplayerMode != 2) return;
-            ServerIntro message = new ServerIntro();
-            message.Mode = Game1.whichFarm;
+            ServerIntro message = new ServerIntro {
+                Mode = Game1.whichFarm
+            };
             Helper.Multiplayer.SendMessage(message, "MTNBeforeServerIntro", new[] { this.ModManifest.UniqueID });
         }
 
@@ -216,6 +235,11 @@ namespace MTN2
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OverrideWarps(object sender, EventArgs e) {
             if (CustomManager.Canon) return;
             if (CustomManager.LoadedFarm == null) return;
