@@ -50,7 +50,9 @@ namespace MTN2.Patches.Game1Patches {
             string mapAssetKey;
 
             if (customManager.LoadedFarm == null) {
-                customManager.LoadCustomFarm(Game1.whichFarm);
+                if (Game1.whichFarm < 6)
+                    customManager.LoadCustomFarm(Game1.whichFarm);
+                
             }
 
             if (!customManager.Canon) {

@@ -1131,6 +1131,7 @@ namespace MTN2.Menus {
             }
         }
 
+        // MTN Customized
         private void optionButtonClick(string name) {
             if (name.StartsWith("MTN_")) {
                 if (this.source == CharacterCustomization.Source.NewGame || this.source == CharacterCustomization.Source.HostNewFarm) {
@@ -1145,6 +1146,7 @@ namespace MTN2.Menus {
             Game1.playSound("coin");
         }
 
+        // Vanilla cases
         private void vanillaOptionButtonClick(string name) {
             switch (name) {
                 case "Cat":

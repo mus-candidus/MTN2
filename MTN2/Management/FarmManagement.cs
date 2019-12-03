@@ -20,6 +20,7 @@ namespace MTN2.Management {
         /// Fields ///
         //////////////
 
+        private const int NumberOfCanonFarms = 6;
         protected int LoadedIndex = -1;
         protected int SelectedIndex = -1;
 
@@ -268,7 +269,7 @@ namespace MTN2.Management {
         /// <param name="whichFarm"></param>
         /// <returns></returns>
         public bool Load(int whichFarm) {
-            if (whichFarm < 5) return true;
+            if (whichFarm < NumberOfCanonFarms) return true;
 
             for (int i = 0; i < FarmList.Count; i++) {
                 if (FarmList[i].ID == whichFarm) {

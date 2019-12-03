@@ -11,6 +11,7 @@ using MTN2.Management;
 using MTN2.MapData;
 using MTN2.Menus;
 using MTN2.Messages;
+using MTN2.SaveData;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -79,11 +80,12 @@ namespace MTN2
         private void TryToResolveFarmId(object sender, LoadStageChangedEventArgs e) {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedBasicInfo) {
                 if (Game1.whichFarm >= 5 && Game1.hasApplied1_4_UpdateChanges == false) {
+                    CustomFarm farm = CustomManager.FarmList.Find(x => x.ID == Game1.whichFarm);
 
+                    MtnFarmData customData = new MtnFarmData { FarmTypeName = farm.Name };
+                    Helper.Data.WriteSaveData("MtnFarmData", customData);
+                    Game1.whichFarm = 200;
                 }
-                object save = SaveGame.loaded;
-                object game1 = Game1.whichFarm;
-                object fix = Game1.hasApplied1_4_UpdateChanges;
             }
         }
 
