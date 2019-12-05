@@ -16,6 +16,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using xTile;
 
 namespace MTN2
 {
@@ -44,6 +45,8 @@ namespace MTN2
         /// </summary>
         /// <param name="helper">Interface of ModHelper. Provides access to various SMAPI tools/methods.</param>
         public override void Entry(IModHelper helper) {
+            this.CustomManager.Initialize(Helper);
+
             Monitor.Log("Begin: Harmony Patching", LogLevel.Trace);
             PatchManager.Initialize(this, Monitor);
             PatchManager.Apply(Harmony);
@@ -85,6 +88,19 @@ namespace MTN2
                     MtnFarmData customData = new MtnFarmData { FarmTypeName = farm.Name };
                     Helper.Data.WriteSaveData("MtnFarmData", customData);
                     Game1.whichFarm = 200;
+
+                    CustomManager.LoadCustomFarmByMtnData();
+
+                    //int farmIndex;
+                    //Map map;
+                    //string mapAssetKey;
+
+                    //for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
+                    //    if (Game1.locations[farmIndex].Name == "Farm") break;
+                    //}
+
+                    //mapAssetKey = CustomManager.GetAssetKey(out map, "Farm");
+                    //Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
                 }
             }
         }

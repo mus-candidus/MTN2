@@ -9,6 +9,7 @@ using StardewValley.Locations;
 using StardewModdingAPI;
 using MTN2.MapData;
 using Harmony;
+using MTN2.SaveData;
 
 namespace MTN2.Patches.Game1Patches {
     /// <summary>
@@ -50,9 +51,11 @@ namespace MTN2.Patches.Game1Patches {
             string mapAssetKey;
 
             if (customManager.LoadedFarm == null) {
-                if (Game1.whichFarm < 6)
+                if (Game1.whichFarm < 6) {
                     customManager.LoadCustomFarm(Game1.whichFarm);
-                
+                } else {
+                    customManager.LoadCustomFarmByMtnData();
+                }
             }
 
             if (!customManager.Canon) {

@@ -850,6 +850,9 @@ namespace MTN2.Menus {
             textureComponent17.leftNeighborID = 517;
             textureComponent17.rightNeighborID = 505;
             this.skipIntroButton = textureComponent17;
+
+            noDebrisButton = new ClickableTextureComponent("No Debris", new Rectangle(skipIntroButton.bounds.X, skipIntroButton.bounds.Y + 45, 64, 64), null, "Start off with a bare farm. No trees, twigs, rocks or weeds.", Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4f, false);
+
             if (flag2) {
                 num4 += 68;
                 List<ClickableComponent> selectionButtons3 = this.leftSelectionButtons;
@@ -1214,6 +1217,11 @@ namespace MTN2.Menus {
                         Game1.exitActiveMenu();
                         break;
                     }
+
+                    if (!customManager.Canon) {
+                        customManager.SetMtnFarmData();
+                    }
+
                     Game1.player.Name = this.nameBox.Text.Trim();
                     Game1.player.displayName = Game1.player.Name;
                     Game1.player.favoriteThing.Value = this.favThingBox.Text.Trim();
@@ -1285,7 +1293,7 @@ namespace MTN2.Menus {
         private void adjustWhichFarmType(string name) {
             lastClickedFarmTypeBtn = name;
             customManager.UpdateSelectedFarm(name);
-            if (!customManager.Canon) Game1.whichFarm = customManager.SelectedFarm.ID;
+            if (!customManager.Canon) Game1.whichFarm = 200;
             adjustCabinSettings();
         }
 

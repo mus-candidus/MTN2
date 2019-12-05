@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MTN2.Compatibility;
 using MTN2.Management;
 using MTN2.MapData;
+using MTN2.SaveData;
 using StardewModdingAPI;
 using StardewValley.Locations;
 
@@ -22,11 +23,13 @@ namespace MTN2.Management
     /// of custom classes and manipulates / gathers the data accordingly.
     /// </summary>
     internal class CustomManager : ICustomManager {
-        public IContentPack LoadedPack { get; private set; }
         private FarmManagement FarmManager { get; set; }
         private GHouseManagement GreenhouseManager { get; set; }
         private FHouseManagement HouseManager { get; set; }
-        
+
+        private Func<string, MtnFarmData> ReadFarmData;
+        private Action<string, MtnFarmData> WriteFarmData;
+
         public bool NoDebris { get; set; } = false;
         public bool Canon { get; private set; } = true;
         public int ScienceHouseIndex { get; private set; }
@@ -46,6 +49,8 @@ namespace MTN2.Management
         public int GreenHouseEntryX { get { return GreenhouseManager.GreenHouseEntryX(Canon); } }
         public int GreenHouseEntryY { get { return GreenhouseManager.GreenHouseEntryY(Canon); } }
 
+        public IContentPack LoadedPack { get; private set; }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -53,6 +58,11 @@ namespace MTN2.Management
             FarmManager = new FarmManagement();
             GreenhouseManager = new GHouseManagement(FarmManager);
             HouseManager = new FHouseManagement(FarmManager);
+        }
+
+        public void Initialize(IModHelper helper) {
+            ReadFarmData = helper.Data.ReadSaveData<MtnFarmData>;
+            WriteFarmData = helper.Data.WriteSaveData;
         }
 
         /// <summary>
@@ -97,6 +107,16 @@ namespace MTN2.Management
         public void LoadCustomFarm(int whichFarm) {
             Canon = FarmManager.Load(whichFarm);
             //if (!Canon) GreenhouseManager.LinkToFarm(FarmManager.LoadedFarm);
+        }
+
+        public void LoadCustomFarmByMtnData() {
+            MtnFarmData farmData = ReadFarmData.Invoke("MtnFarmData");
+            Canon = FarmManager.Load(farmData);
+        }
+
+        public void SetMtnFarmData() {
+            MtnFarmData newData = new MtnFarmData { FarmTypeName = FarmManager.SelectedFarm.Name };
+            WriteFarmData.Invoke("MtnFarmData", newData);
         }
         
         /// <summary>

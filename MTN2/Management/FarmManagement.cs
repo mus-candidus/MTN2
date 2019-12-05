@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile;
 using SObject = StardewValley.Object;
+using MTN2.SaveData;
 
 namespace MTN2.Management {
     internal class FarmManagement {
@@ -83,9 +84,7 @@ namespace MTN2.Management {
         }
 
         ////////////////////
-        ////////////////////
         /// Constructors ///
-        ////////////////////
         ////////////////////
         
         /// <summary>
@@ -96,9 +95,7 @@ namespace MTN2.Management {
         }
 
         ///////////////
-        ///////////////
         /// Methods ///
-        ///////////////
         ///////////////
 
         /// <summary>
@@ -279,6 +276,21 @@ namespace MTN2.Management {
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public bool Load(MtnFarmData data) {
+            string farmName = data.FarmTypeName;
+            int index = FarmList.FindIndex(n => n.Name == farmName);
+
+            if (index < 0) return false;
+
+            LoadedIndex = index;
+            return true;
         }
 
         /// <summary>
