@@ -65,6 +65,8 @@ namespace MTN2.Patches.Game1Patches {
 
                 mapAssetKey = customManager.GetAssetKey(out map, "Farm");
                 Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
+                Game1.locations[farmIndex].reloadMap();
+
                 //if (customManager.LoadedFarm.FarmMap.FileType != FileType.xnb && Game1.multiplayerMode == 1) {
                 //    customManager.LoadedFarm.ContentPack.LoadAsset<Map>(mapAssetKey);
                 //}

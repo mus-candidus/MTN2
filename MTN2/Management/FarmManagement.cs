@@ -287,10 +287,10 @@ namespace MTN2.Management {
             string farmName = data.FarmTypeName;
             int index = FarmList.FindIndex(n => n.Name == farmName);
 
-            if (index < 0) return false;
+            if (index < 0) return true;
 
             LoadedIndex = index;
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -312,10 +312,10 @@ namespace MTN2.Management {
         /// <param name="map"></param>
         /// <returns></returns>
         public string GetAssetKey(out Map map) {
-            if (!(LoadedFarm.FarmMap.FileType == FileType.xnb)) {
-                map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
+            if (LoadedFarm.FarmMap.FileType == FileType.xnb) {
+                map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".xnb");
             } else {
-                map = null;
+                map = LoadedFarm.ContentPack.LoadAsset<Map>(LoadedFarm.FarmMap.FileName + ".tbin");
             }
             return LoadedFarm.ContentPack.GetActualAssetKey(LoadedFarm.FarmMap.FileName + ((!(LoadedFarm.FarmMap.FileType == FileType.xnb)) ? ".tbin" : ".xnb"));
         }

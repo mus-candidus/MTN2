@@ -62,6 +62,7 @@ namespace MTN2
             Helper.Events.GameLoop.Saved += AfterSaveScienceLab;
             Helper.Events.Multiplayer.PeerContextReceived += BeforeServerIntroduction;
             Helper.Events.Multiplayer.ModMessageReceived += MessageRecieved;
+            Helper.Events.GameLoop.SaveCreating += NewMtnSave;
 
             Helper.Events.Specialized.LoadStageChanged += TryToResolveFarmId;
 
@@ -80,6 +81,15 @@ namespace MTN2
             return;
         }
 
+        private void NewMtnSave(object sender, SaveCreatingEventArgs e) {
+            MtnFarmData data = Helper.Data.ReadSaveData<MtnFarmData>("MtnFarmData");
+            if (data == null && !CustomManager.Canon) {
+                CustomFarm farm = CustomManager.SelectedFarm;
+                MtnFarmData customData = new MtnFarmData { FarmTypeName = farm.Name };
+                Helper.Data.WriteSaveData("MtnFarmData", customData);
+            }
+        }
+
         private void TryToResolveFarmId(object sender, LoadStageChangedEventArgs e) {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedBasicInfo) {
                 if (Game1.whichFarm >= 5 && Game1.hasApplied1_4_UpdateChanges == false) {
@@ -91,16 +101,17 @@ namespace MTN2
 
                     CustomManager.LoadCustomFarmByMtnData();
 
-                    //int farmIndex;
-                    //Map map;
-                    //string mapAssetKey;
+                    int farmIndex;
+                    Map map;
+                    string mapAssetKey;
 
-                    //for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
-                    //    if (Game1.locations[farmIndex].Name == "Farm") break;
-                    //}
+                    for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
+                        if (Game1.locations[farmIndex].Name == "Farm") break;
+                    }
 
-                    //mapAssetKey = CustomManager.GetAssetKey(out map, "Farm");
-                    //Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
+                    mapAssetKey = CustomManager.GetAssetKey(out map, "Farm");
+                    Game1.locations[farmIndex] = new Farm(mapAssetKey, "Farm");
+                    Game1.locations[farmIndex].reloadMap();
                 }
             }
         }

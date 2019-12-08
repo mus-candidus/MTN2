@@ -4,13 +4,16 @@ using MTN2.Compatibility;
 using MTN2.Management;
 using MTN2.MapData;
 using MTN2.SaveData;
+using Newtonsoft.Json;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Locations;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using xTile;
@@ -27,6 +30,7 @@ namespace MTN2.Management
         private GHouseManagement GreenhouseManager { get; set; }
         private FHouseManagement HouseManager { get; set; }
 
+        private IModHelper helper;
         private Func<string, MtnFarmData> ReadFarmData;
         private Action<string, MtnFarmData> WriteFarmData;
 
@@ -61,7 +65,7 @@ namespace MTN2.Management
         }
 
         public void Initialize(IModHelper helper) {
-            ReadFarmData = helper.Data.ReadSaveData<MtnFarmData>;
+            this.helper = helper;
             WriteFarmData = helper.Data.WriteSaveData;
         }
 
@@ -110,13 +114,17 @@ namespace MTN2.Management
         }
 
         public void LoadCustomFarmByMtnData() {
-            MtnFarmData farmData = ReadFarmData.Invoke("MtnFarmData");
+            //Lets see if this thing is on
+            MethodInfo keyReader = helper.Data.GetType().GetMethod("GetSaveFileKey", BindingFlags.NonPublic | BindingFlags.Instance);
+            string key = (string)keyReader.Invoke(helper.Data, new object[] { "MtnFarmData" });
+            MtnFarmData farmData = JsonConvert.DeserializeObject<MtnFarmData>(SaveGame.loaded.CustomData[key]);
+
             Canon = FarmManager.Load(farmData);
         }
 
         public void SetMtnFarmData() {
             MtnFarmData newData = new MtnFarmData { FarmTypeName = FarmManager.SelectedFarm.Name };
-            WriteFarmData.Invoke("MtnFarmData", newData);
+            helper.Data.WriteSaveData("MtnFarmData", newData);
         }
         
         /// <summary>

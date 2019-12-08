@@ -515,7 +515,7 @@ namespace MTN2.Menus {
                 }
 
                 foreach (CustomFarm customFarm in customManager?.FarmList) {
-                    this.farmTypeButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(point.X, point.Y + 440, 88, 80), null,
+                    this.allFarmButtons.Add(new ClickableTextureComponent("MTN_" + customFarm.Name, new Rectangle(point.X, point.Y + 440, 88, 80), null,
                         customFarm.DescriptionName + "_" + customFarm.DescriptionDetails, customFarm.IconSource, new Rectangle(0, 0, 22, 20), 4f, false));
                 }
 
@@ -1218,9 +1218,7 @@ namespace MTN2.Menus {
                         break;
                     }
 
-                    if (!customManager.Canon) {
-                        customManager.SetMtnFarmData();
-                    }
+                    customManager.LoadCustomFarm();
 
                     Game1.player.Name = this.nameBox.Text.Trim();
                     Game1.player.displayName = Game1.player.Name;
