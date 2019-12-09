@@ -26,6 +26,8 @@ namespace MTN2.Management
     /// of custom classes and manipulates / gathers the data accordingly.
     /// </summary>
     internal class CustomManager : ICustomManager {
+
+
         private FarmManagement FarmManager { get; set; }
         private GHouseManagement GreenhouseManager { get; set; }
         private FHouseManagement HouseManager { get; set; }
@@ -43,7 +45,19 @@ namespace MTN2.Management
         public List<CustomGreenHouse> GreenHouseList { get { return GreenhouseManager.GreenHouseList; } }
         public CustomFarm SelectedFarm { get { return FarmManager.SelectedFarm; } }
         public CustomFarm LoadedFarm { get { return FarmManager.LoadedFarm; } }
-        public Interaction ShippingBin { get { return FarmManager.ShippingBin; } }
+
+        public Interaction ShippingBin {
+            get {
+                if (Canon) return FarmManager.CanonShippingBinPoint;
+                return FarmManager.ShippingBin;
+            }
+        }
+        public int ShippingBinX { get { return FarmManager.ShippingBinX(Canon); } }
+        public int ShippingBinY { get { return FarmManager.ShippingBinY(Canon); } }
+
+        public int ShippingBinXOffSet { get { return this.ShippingBinX + 1; } }
+        public int ShippingBinYOffSet { get { return this.ShippingBinY + 1; } }
+
         public Interaction RabbitShrine { get { return FarmManager.RabbitShrine; } }
         public Interaction PetWaterBowl { get { return FarmManager.PetWaterBowl; } }
         public Point FarmHousePorch { get { return HouseManager.FrontPorch; } }
@@ -114,10 +128,17 @@ namespace MTN2.Management
         }
 
         public void LoadCustomFarmByMtnData() {
-            //Lets see if this thing is on
+            MtnFarmData farmData;
+
             MethodInfo keyReader = helper.Data.GetType().GetMethod("GetSaveFileKey", BindingFlags.NonPublic | BindingFlags.Instance);
             string key = (string)keyReader.Invoke(helper.Data, new object[] { "MtnFarmData" });
-            MtnFarmData farmData = JsonConvert.DeserializeObject<MtnFarmData>(SaveGame.loaded.CustomData[key]);
+            if (SaveGame.loaded.CustomData.TryGetValue(key, out string value)) {
+                farmData = JsonConvert.DeserializeObject<MtnFarmData>(SaveGame.loaded.CustomData[key]);
+            } else {
+                CustomFarm farm = FarmList.Find(x => x.ID == Game1.whichFarm);
+                farmData = new MtnFarmData { FarmTypeName = farm.Name };
+                helper.Data.WriteSaveData("MtnFarmData", farmData);
+            }
 
             Canon = FarmManager.Load(farmData);
         }

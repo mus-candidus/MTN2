@@ -25,6 +25,8 @@ namespace MTN2.Management {
         protected int LoadedIndex = -1;
         protected int SelectedIndex = -1;
 
+        public readonly Interaction CanonShippingBinPoint = new Interaction(71, 13);
+
         //////////////////
         /// Properties ///
         //////////////////
@@ -225,6 +227,16 @@ namespace MTN2.Management {
             farm.GrandpaShrine = farm.GrandpaShrine ?? new Structure(new Placement(), new Interaction(9, 7));
             farm.RabbitShrine = farm.RabbitShrine ?? new Structure(new Placement(), new Interaction(48, 7));
             farm.PetWaterBowl = farm.PetWaterBowl ?? new Structure(new Placement(), new Interaction(54, 7));
+        }
+
+        public int ShippingBinX(bool Canon) {
+            if (Canon) return CanonShippingBinPoint.X;
+            return ShippingBin.X;
+        }
+
+        public int ShippingBinY(bool Canon) {
+            if (Canon) return CanonShippingBinPoint.Y;
+            return ShippingBin.Y;
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Harmony;
@@ -12,6 +13,7 @@ using MTN2.MapData;
 using MTN2.Menus;
 using MTN2.Messages;
 using MTN2.SaveData;
+using Newtonsoft.Json;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -64,7 +66,7 @@ namespace MTN2
             Helper.Events.Multiplayer.ModMessageReceived += MessageRecieved;
             Helper.Events.GameLoop.SaveCreating += NewMtnSave;
 
-            Helper.Events.Specialized.LoadStageChanged += TryToResolveFarmId;
+            //Helper.Events.Specialized.LoadStageChanged += TryToResolveFarmId;
 
             Helper.ConsoleCommands.Add("LocationEntry", "Lists (all) the location loaded in the game.\n" +
                                                         "Usage: LocationEntry <number>\n" +
@@ -92,7 +94,13 @@ namespace MTN2
 
         private void TryToResolveFarmId(object sender, LoadStageChangedEventArgs e) {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedBasicInfo) {
-                if (Game1.whichFarm >= 5 && Game1.hasApplied1_4_UpdateChanges == false) {
+                if (Game1.whichFarm >= 5) {
+                    MethodInfo keyReader = Helper.Data.GetType().GetMethod("GetSaveFileKey", BindingFlags.NonPublic | BindingFlags.Instance);
+                    string key = (string)keyReader.Invoke(Helper.Data, new object[] { "MtnFarmData" });
+                    MtnFarmData farmData = JsonConvert.DeserializeObject<MtnFarmData>(SaveGame.loaded.CustomData[key]);
+
+                    if (farmData != null) return;
+
                     CustomFarm farm = CustomManager.FarmList.Find(x => x.ID == Game1.whichFarm);
 
                     MtnFarmData customData = new MtnFarmData { FarmTypeName = farm.Name };
@@ -105,6 +113,7 @@ namespace MTN2
                     Map map;
                     string mapAssetKey;
 
+                    Game1.removeLocationFromLocationLookup("Farm");
                     for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
                         if (Game1.locations[farmIndex].Name == "Farm") break;
                     }

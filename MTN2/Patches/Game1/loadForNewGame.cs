@@ -59,6 +59,8 @@ namespace MTN2.Patches.Game1Patches {
             }
 
             if (!customManager.Canon) {
+                Game1.removeLocationFromLocationLookup("Farm");
+
                 for (farmIndex = 0; farmIndex < Game1.locations.Count; farmIndex++) {
                     if (Game1.locations[farmIndex].Name == "Farm") break;
                 }
