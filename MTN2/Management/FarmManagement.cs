@@ -363,7 +363,7 @@ namespace MTN2.Management {
         /// <param name="Canon"></param>
         /// <returns></returns>
         public Vector2 MailboxNotification(float xOffset, float yOffset, bool Option, bool Canon) {
-            Point mailbox_position = Game1.player.getMailboxPosition();
+            Point mailbox_position = (Canon) ? Game1.player.getMailboxPosition() : LoadedFarm.MailBox.PointOfInteraction.ToPoint();
             return new Vector2(mailbox_position.X * 64f + xOffset, (mailbox_position.Y * 64 - 96 - 48) + yOffset);
 
             //if (Canon || LoadedFarm.MailBox == null) {

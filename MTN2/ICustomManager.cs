@@ -34,6 +34,7 @@ namespace MTN2 {
         void LoadCustomFarm();
         void LoadCustomFarm(int whichFarm);
         void LoadCustomFarmByMtnData();
+        void LoadCustomFarmByMtnData(string FarmType);
         void SetMtnFarmData();
         string GetAssetKey(out Map map, string type);
         string GetAssetKey(string fileName, FileType fileType);

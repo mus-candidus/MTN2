@@ -143,6 +143,11 @@ namespace MTN2.Management
             Canon = FarmManager.Load(farmData);
         }
 
+        public void LoadCustomFarmByMtnData(string FarmType) {
+            MtnFarmData farmData = new MtnFarmData { FarmTypeName = FarmType };
+            Canon = FarmManager.Load(farmData);
+        }
+
         public void SetMtnFarmData() {
             MtnFarmData newData = new MtnFarmData { FarmTypeName = FarmManager.SelectedFarm.Name };
             helper.Data.WriteSaveData("MtnFarmData", newData);

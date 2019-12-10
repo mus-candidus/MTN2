@@ -253,7 +253,9 @@ namespace MTN2
         private void BeforeServerIntroduction(object sender, EventArgs e) {
             if (Game1.multiplayerMode != 2) return;
             ServerIntro message = new ServerIntro {
-                Mode = Game1.whichFarm
+                Canon = CustomManager.Canon,
+                WhichFarmId = Game1.whichFarm,
+                FarmType = Helper.Data.ReadSaveData<MtnFarmData>("MtnFarmData").FarmTypeName
             };
             Helper.Multiplayer.SendMessage(message, "MTNBeforeServerIntro", new[] { this.ModManifest.UniqueID });
         }
@@ -267,8 +269,12 @@ namespace MTN2
             if (e.FromModID == "SgtPickles.MTN") {
                 if (e.Type == "MTNBeforeServerIntro") {
                     ServerIntro newMsg = e.ReadAs<ServerIntro>();
-                    Game1.whichFarm = newMsg.Mode;
-                    CustomManager.LoadCustomFarm(newMsg.Mode);
+                    Game1.whichFarm = newMsg.WhichFarmId;
+                    if (newMsg.Canon) {
+                        CustomManager.LoadCustomFarm(Game1.whichFarm);
+                    } else {
+                        CustomManager.LoadCustomFarmByMtnData(newMsg.FarmType);
+                    }
                 }
             }
         }
