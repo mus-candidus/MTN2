@@ -55,6 +55,9 @@ namespace MTN2.Management
         public int ShippingBinX { get { return FarmManager.ShippingBinX(Canon); } }
         public int ShippingBinY { get { return FarmManager.ShippingBinY(Canon); } }
 
+        public int MailBoxX { get { return FarmManager.MailBox.X; } }
+        public int MailBoxY { get { return FarmManager.MailBox.Y; } }
+
         public int ShippingBinXOffSet { get { return this.ShippingBinX + 1; } }
         public int ShippingBinYOffSet { get { return this.ShippingBinY + 1; } }
 

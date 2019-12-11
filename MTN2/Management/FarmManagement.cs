@@ -85,6 +85,12 @@ namespace MTN2.Management {
             }
         }
 
+        public Interaction MailBox {
+            get {
+                return LoadedFarm.MailBox.PointOfInteraction;
+            }
+        }
+
         ////////////////////
         /// Constructors ///
         ////////////////////

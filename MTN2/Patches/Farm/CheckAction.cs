@@ -24,7 +24,6 @@ namespace MTN2.Patches.FarmPatches
     public class checkActionPatch
     {
         private static ICustomManager customManager;
-        private static Farm currentFarm;
 
         /// <summary>
         /// Constructor. Awkward method of setting references needed. However, Harmony patches
