@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using xTile;
 using SObject = StardewValley.Object;
 using MTN2.SaveData;
+using StardewValley.Buildings;
 
 namespace MTN2.Management {
     internal class FarmManagement {
@@ -358,6 +359,18 @@ namespace MTN2.Management {
             }
             Interaction POI = LoadedFarm.GrandpaShrine.PointOfInteraction;
             return new Vector2(POI.X * 64f, POI.Y * 64f);
+        }
+
+        public Point GetMailbox(Farmer farmer)
+        {
+            foreach (Building building in Game1.getFarm().buildings)
+            {
+                if (building.isCabin && building.nameOfIndoors == farmer.homeLocation)
+                {
+                    return building.getMailboxPosition();
+                }
+            }
+            return this.MailBox.ToPoint();
         }
 
         /// <summary>

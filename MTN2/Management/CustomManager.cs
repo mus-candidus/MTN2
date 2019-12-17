@@ -70,6 +70,14 @@ namespace MTN2.Management
         public int GreenHouseEntryX { get { return GreenhouseManager.GreenHouseEntryX(Canon); } }
         public int GreenHouseEntryY { get { return GreenhouseManager.GreenHouseEntryY(Canon); } }
 
+        public Point MailboxPosition
+        {
+            get
+            {
+                return this.FarmManager.GetMailbox(Game1.player);
+            }
+        }
+
         public IContentPack LoadedPack { get; private set; }
 
         /// <summary>
