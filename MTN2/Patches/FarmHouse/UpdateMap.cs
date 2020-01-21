@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.StringComparer;
 
 namespace MTN2.Patches.FarmHousePatches
 {
@@ -42,27 +43,10 @@ namespace MTN2.Patches.FarmHousePatches
             if (__instance is Cabin) {
                 // TO DO
             } else {
-                int X = 0;
-                int Y = 0;
-                __instance.warps.Clear();
-                switch (Game1.MasterPlayer.houseUpgradeLevel) {
-                    case 0:
-                        X = 3;
-                        Y = 12;
-                        break;
-                    case 1:
-                        X = 9;
-                        Y = 12;
-                        break;
-                    case 2:
-                    case 3:
-                        X = 12;
-                        Y = 21;
-                        __instance.warps.Add(new Warp(4, 25, "Cellar", 3, 2, false));
-                        __instance.warps.Add(new Warp(5, 25, "Cellar", 4, 2, false));
-                        break;
-                }
-                __instance.warps.Add(new Warp(X, Y, "Farm", customManager.FarmHousePorch.X, customManager.FarmHousePorch.Y, false));
+                // Modify the warp point to farm.
+                Warp farmWarp = __instance.warps.First(warp => OrdinalIgnoreCase.Equals(warp.TargetName, "Farm"));
+                farmWarp.TargetX = customManager.FarmHousePorch.X;
+                farmWarp.TargetY = customManager.FarmHousePorch.Y;
             }
         }
     }
